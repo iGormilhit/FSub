@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+    <meta charset="utf-8" />
+        
+		<title>FSub</title>
+		
+		<link rel="stylesheet" href="libraries/jquery-mobile/jquery.mobile-1.4.3.min.css" />
+    <script src="libraries/jquery-mobile/jquery-1.11.1.min.js"></script>
+    <script src="libraries/jquery-mobile/jquery.mobile-1.4.3.min.js"></script>
+		
+		<script src="js/subsonic2.js"></script>
+    <script src="js/utils.js"></script>
+	</head>
+	
+	<body>
+	<!-- Main page -->
+	<div data-role="page" id="pMain">
+	    <div data-role="header" data-position="fixed">
+	        <a href="#" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-grid">Panel</a>
+	        <h1>FSub</h1>
+	        <a href="#" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-carat-r">Player</a>
+	    </div>
+	    
+	    <div data-role="main" class="ui-content">
+	        <form>
+	            <input type="search" id="search" placeholder="Recherche...">
+	        </form>
+	        
+	        <ul data-role="listview" data-inset="true" id="listview"></ul>
+	    </div>
+	    
+	    <div data-role="footer" data-position="fixed">
+	        <div data-role="navbar">
+	            <ul>
+	                <li><a href="#" data-icon="bars" class="ui-btn-active" id="goAlbumList">Albums</a></li>
+	                <li><a href="#" data-icon="bullets" id="goArtistList">Artistes</a></li>
+                  <li><a href="#" data-icon="gear" id="goOptions">Options</a></li>
+	            </ul>
+	        </div>
+	    </div>
+	</div>
+	
+	<!-- Song list -->
+	<div data-role="page" id="pSong">
+	    <div data-role="header" data-postion="fixed">
+	        <a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
+	        <h1>Album</h1>
+	    </div>
+	    
+	    <div data-role="main" class="ui-content">
+          <div data-role="controlgroup" data-type="horizontal" data-mini="true">
+              <a href="#" class="ui-btn" id="btAllPlay">Ts jouer</a>
+              <a href="#" class="ui-btn">Jouer</a>
+              <a href="#" class="ui-btn">Ajouter</a>
+              <a href="#" class="ui-btn">Téléch.</a>
+          </div>
+	        <fieldset data-role="controlgroup" data-type="vertical" id="songList" data-mini="true"></fieldset>
+	    </div>
+	</div>
+  
+  <!-- Options page -->
+  <div data-role="page" id="pOptions">
+    <div data-role="header">
+      <a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
+      <h1>Paramètres</h1>
+    </div>
+    
+    <div role="main" class="ui-content">
+      <form id="fOptions">
+        <label for="opServer">Serveur:</label>
+        <input type="url" name="server" id="opServer" placeholder="http://your-server">
+        
+        <label for="opUsername">Utilisateur:</label>
+        <input type="text" name="username" id="opUsername" placeholder="username">
+        
+        <label for="opPassword">Mot de passe:</label>
+        <input type="password" name="password" id="opPassword" placeholder="password">
+        
+        <a href="#" class="ui-btn" id="testServer">Tester le serveur</a>
+        
+        <a href="#" class="ui-btn ui-btn-inline" data-rel="back">Annuler</a>
+        <a href="#" class="ui-btn ui-btn-inline" id="opSave">Valider</a>
+      </form>
+    </div>
+  </div>
+	<script src="js/fsub2.js"></script>
+	</body>
+</html>

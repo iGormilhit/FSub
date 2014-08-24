@@ -1,0 +1,26 @@
+{
+  "name": "FSub",
+  "description": "Un client Subsonic pour Firefox OS",
+  "version": "0.2.0",
+  "launch_path": "/index.html",
+  "icons": {
+    "60": "/img/fsub-60.png",
+    "128": "/img/fsub-128.png"
+  },
+  "developer": {
+    "name": "TuxGasy",
+    "url": "http://www.tuxgasy.fr"
+  },
+  "permissions": {
+    "systemXHR": {},
+    "audio-channel-content": {},
+    "device-storage:sdcard": {
+      "access": "readwrite"
+    }
+  },
+  "type": "privileged",
+  "installs_allowed_from": [
+    "*"
+  ],
+  "default_locale": "fr"
+}
