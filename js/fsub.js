@@ -25,6 +25,8 @@ audio.preload = 'auto';
 audio.mozAudioChannelType = 'content';
 
 var playList = [];
+var indexPlayList = -1;
+
 var currentSongList = [];
 
 var sd = navigator.getDeviceStorage('sdcard');
@@ -85,28 +87,30 @@ function showAlbumListByArtist(data){
     $("#listview").listview("refresh");
 };
 
+function playSong(blob){
+  audio.src = URL.createObjectURL(blob);
+  audio.play();
+  
+  $("#title").html(playList[indexPlayList].title);
+}
+
 function saveSong(blob, song, play){
   var req = sd.addNamed(blob, '/extsdcard/subsonic/'+song.path);
-  req.onsuccess = function(){
-    console.log(this.result);
-    }
-  req.onerror = function(){
-    console.warn(this.error);
-  }
   
   if(typeof play !== 'undefined' && play){
-    audio.src = URL.createObjectURL(blob);
-    audio.play();
+    playSong(blob);
   }
 }
 
 function startPlaylist(){
-  $.each(playList, function(i, song){
-    if(i === 0)
-      fsub.stream(saveSong, song, true);
-    /*else
-      fsub.stream(saveSong, song);*/
-  });
+  indexPlayList = 0;
+  var req = sd.get('/extsdcard/subsonic/'+playList[indexPlayList].path);
+  req.onsuccess = function(){
+    playSong(this.result);
+  }
+  req.onerror = function(){
+    fsub.stream(saveSong, playList[indexPlayList], true);
+  }
 }
 
 function showAlbum(data){
