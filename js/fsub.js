@@ -86,7 +86,7 @@ function showAlbumListByArtist(data){
 };
 
 function saveSong(blob, song, play){
-  var req = sd.addNamed(blob, '/sdcard/subsonic/'+song.id+'.mp3');
+  var req = sd.addNamed(blob, '/extsdcard/subsonic/'+song.path);
   req.onsuccess = function(){
     console.log(this.result);
     }
