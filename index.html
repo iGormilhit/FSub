@@ -69,19 +69,34 @@
     
     <div role="main" class="ui-content">
       <form id="fOptions">
-        <label for="opServer">Serveur:</label>
-        <input type="url" name="server" id="opServer" placeholder="http://your-server">
+        <div data-role="fieldcontain">
+          <label for="opServer">Serveur:</label>
+          <input type="url" name="server" id="opServer" placeholder="http://your-server">
+          
+          <label for="opUsername">Utilisateur:</label>
+          <input type="text" name="username" id="opUsername" placeholder="username">
+          
+          <label for="opPassword">Mot de passe:</label>
+          <input type="password" name="password" id="opPassword" placeholder="password">
+          
+          <a href="#" class="ui-btn" id="testServer">Tester le serveur</a>
+        </div>
         
-        <label for="opUsername">Utilisateur:</label>
-        <input type="text" name="username" id="opUsername" placeholder="username">
+        <div class="ui-field-contain" class="full-width-slider-switch">
+          <label for="opCache">Activer le cache:</label>
+          <select name="opCache" id="opCache" data-role="slider">
+            <option value="0">Non</option>
+            <option value="1">Oui</option>
+          </select>
+          
+          <label for="opCacheDir">Dossier de cache:</label>
+          <select name="opCacheDir"></select>
+        </div>
         
-        <label for="opPassword">Mot de passe:</label>
-        <input type="password" name="password" id="opPassword" placeholder="password">
-        
-        <a href="#" class="ui-btn" id="testServer">Tester le serveur</a>
-        
-        <a href="#" class="ui-btn ui-btn-inline" data-rel="back">Annuler</a>
-        <a href="#" class="ui-btn ui-btn-inline" id="opSave">Valider</a>
+        <div class="ui-field-contain">
+          <a href="#" class="ui-btn ui-btn-inline" data-rel="back">Annuler</a>
+          <a href="#" class="ui-btn ui-btn-inline" id="opSave">Valider</a>
+        </div>
       </form>
     </div>
   </div>
