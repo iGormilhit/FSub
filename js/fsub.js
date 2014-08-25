@@ -169,6 +169,15 @@ $("#listview").delegate("li", "click", function(){
     }
 });
 
+$("#opCache").on("change", function(){
+  if($("#opCache").val())
+    $("#opCacheDir").selectmenu("enable");
+  else
+    $("#opCacheDir").selectmenu("disable");
+  
+  $("#opCacheDir").selectmenu("refresh");
+});
+
 $("#goAlbumList").click(function(){
     fsub.getAlbumList2(showAlbumList);
 });
@@ -183,6 +192,8 @@ $("#btAllPlay").click(function(){
 });
 
 $("#goOptions").click(function(){
+  $(":mobile-pagecontainer").pagecontainer( "change", "#pOptions");
+  
   var oServer = localStorage.getItem("server");
   var oUsername = localStorage.getItem("username");
   var oPassword = localStorage.getItem("password");
@@ -190,10 +201,39 @@ $("#goOptions").click(function(){
   if(oServer !== null){
     $("#opServer").val(oServer);
     $("#opUsername").val(oUsername);
+    oPassword = oPassword.substr(4, oPassword.length); // get only after 'enc:'
+    oPassword = hexToString(oPassword); // convert hex to string
     $("#opPassword").val(oPassword);
   }
   
-  $(":mobile-pagecontainer").pagecontainer( "change", "#pOptions");
+  var sdcards = navigator.getDeviceStorages("sdcard");
+  // disable cache option if non SDcard
+  // on Firefox simulator, have one SDcard but not have name
+  if(sdcards.length === 0 || sdcards[0].storageName === ''){
+    $("#opCache").slider("disable");
+    $("#opCacheDir").selectmenu("disable");
+  }else{
+    $("#opCache").slider("enable");
+    
+    $("#opCacheDir").empty();
+    for(var i=0;i<sdcards.length;i++)
+      $("#opCacheDir").append('<option value="'+i+'">'+sdcards[i].storageName+'</option>');
+    
+    var oCache = localStorage.getItem("cache");
+    var oCacheDir = localStorage.getItem("cacheDir");
+    
+    if(oCache !== null && oCache){
+      $("#opCache").val(1);
+      $("#opCacheDir").selectmenu("enable");
+      $("#opCacheDir option[value="+oCacheDir+"]").attr("selected", "selected");
+    }else{ // disable cache dir if cache is off
+      $("#opCache").val(0);
+      $("#opCacheDir").selectmenu("disable");
+    }
+    
+    $("#opCache").slider("refresh");
+    $("#opCacheDir").selectmenu("refresh");
+  }
 });
 
 $("#testServer").click(function(){
@@ -216,6 +256,9 @@ $("#opSave").click(function(){
   var oUsername = $("#opUsername").val();
   var oPassword = $("#opPassword").val();
   
+  var oCache = $("#opCache").val();
+  var oCacheDir = $("#opCacheDir").val();
+  
   if(oServer === '' || oUsername === '' || oPassword === ''){
     alert('Merci de remplir les paramètres');
     return;
@@ -224,6 +267,9 @@ $("#opSave").click(function(){
   localStorage.setItem("server", oServer);
   localStorage.setItem("username", oUsername);
   localStorage.setItem("password", 'enc:'+stringToHex(oPassword));
+  
+  localStorage.setItem("cache", oCache);
+  localStorage.setItem("cacheDir", oCacheDir);
   
   location.href = 'index.html';
 });
