@@ -29,8 +29,8 @@ var indexOfPlaying = -1;
 
 var currentSongList = [];
 
-var sd = navigator.getDeviceStorage('sdcard');
-var cacheDir = '/sdcard/subsonic/';
+var sdcard = null;
+var cacheDir = '';
 
 var currentMainView = VIEW_ALBUM_LIST;
 
@@ -89,22 +89,32 @@ function showAlbumListByArtist(data){
 };
 
 function playSong(song){
-  var req = sd.get(cacheDir+song.path);
-  
-  req.onsuccess = function(){
-    audio.src = URL.createObjectURL(this.result);
-    audio.play();
-  
-    $("#title").html(song.title);
+  if(localStorage.getItem('cache') !== '0'){
+    var req = sdcard.get(cacheDir+song.path);
+    
+    req.onsuccess = function(){
+      audio.src = URL.createObjectURL(this.result);
+    }
+    
+    req.onerror = function(){
+      fsub.stream(saveSong, song, true);
+    }
+  }else{
+    var param = '?u='+encodeURIComponent(fsub.username);
+    param += '&p='+encodeURIComponent(fsub.password);
+    param += '&v='+encodeURIComponent(fsub.version);
+    param += '&c='+encodeURIComponent(fsub.appname);
+    param += '&id='+song.id;
+    param += '&f=json';
+    audio.src = fsub.server+'stream.view'+param;
   }
   
-  req.onerror = function(){
-    fsub.stream(saveSong, song, true);
-  }
+  audio.play();
+  $("#title").html(song.title);
 }
 
 function saveSong(blob, song, play){
-  var req = sd.addNamed(blob, cacheDir+song.path);
+  var req = sdcard.addNamed(blob, cacheDir+song.path);
   
   req.onsuccess = function(){
     if(typeof play !== 'undefined' && play){
@@ -222,7 +232,7 @@ $("#goOptions").click(function(){
     var oCache = localStorage.getItem("cache");
     var oCacheDir = localStorage.getItem("cacheDir");
     
-    if(oCache !== null && oCache){
+    if(oCache !== null && oCache === '1'){
       $("#opCache").val(1);
       $("#opCacheDir").selectmenu("enable");
       $("#opCacheDir option[value="+oCacheDir+"]").attr("selected", "selected");
@@ -269,6 +279,7 @@ $("#opSave").click(function(){
   localStorage.setItem("password", 'enc:'+stringToHex(oPassword));
   
   localStorage.setItem("cache", oCache);
+  console.log(oCache);
   localStorage.setItem("cacheDir", oCacheDir);
   
   location.href = 'index.html';
@@ -287,6 +298,10 @@ $(function(){
       alert('Paramètre du serveur incorrect');
     }else{
       fsub.getAlbumList2(showAlbumList);
+      if(localStorage.getItem('cache') !== '0'){
+        sdcard = navigator.getDeviceStorage('sdcard');
+        cacheDir = '/'+localStorage.getItem('cacheDir')+'/subsonic/';
+      }
     }
   }
 });
