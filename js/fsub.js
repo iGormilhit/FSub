@@ -25,11 +25,12 @@ audio.preload = 'auto';
 audio.mozAudioChannelType = 'content';
 
 var playList = [];
-var indexPlayList = -1;
+var indexOfPlaying = -1;
 
 var currentSongList = [];
 
 var sd = navigator.getDeviceStorage('sdcard');
+var cacheDir = '/sdcard/subsonic/';
 
 var currentMainView = VIEW_ALBUM_LIST;
 
@@ -87,31 +88,49 @@ function showAlbumListByArtist(data){
     $("#listview").listview("refresh");
 };
 
-function playSong(blob){
-  audio.src = URL.createObjectURL(blob);
-  audio.play();
+function playSong(song){
+  var req = sd.get(cacheDir+song.path);
   
-  $("#title").html(playList[indexPlayList].title);
+  req.onsuccess = function(){
+    audio.src = URL.createObjectURL(this.result);
+    audio.play();
+  
+    $("#title").html(song.title);
+  }
+  
+  req.onerror = function(){
+    fsub.stream(saveSong, song, true);
+  }
 }
 
 function saveSong(blob, song, play){
-  var req = sd.addNamed(blob, '/extsdcard/subsonic/'+song.path);
+  var req = sd.addNamed(blob, cacheDir+song.path);
   
-  if(typeof play !== 'undefined' && play){
-    playSong(blob);
+  req.onsuccess = function(){
+    if(typeof play !== 'undefined' && play){
+      playSong(song);
+    }
+  }
+  
+  req.onerror = function(){
+    console.error('Unable to save the song: '+this.error);
   }
 }
 
 function startPlaylist(){
-  indexPlayList = 0;
-  var req = sd.get('/extsdcard/subsonic/'+playList[indexPlayList].path);
-  req.onsuccess = function(){
-    playSong(this.result);
-  }
-  req.onerror = function(){
-    fsub.stream(saveSong, playList[indexPlayList], true);
-  }
+  indexOfPlaying = 0;
+  playSong(playList[indexOfPlaying]);
 }
+
+audio.addEventListener("ended", function(){ // play next in playlist
+    indexOfPlaying++;
+    if(typeof playList[indexOfPlaying] !== 'undefined'){
+        playSong(playList[indexOfPlaying]);
+    }else{
+        indexOfPlaying=0;
+        $("#title").html('FSub');
+    }
+}, false);
 
 function showAlbum(data){
     if(data.status === 'failed')
