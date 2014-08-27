@@ -1,3 +1,4 @@
+'user strict'
 /*
  * This file is part of Fsub.
  *
@@ -30,6 +31,7 @@ var indexOfPlaying = -1;
 var currentSongList = [];
 
 var sdcard = null;
+var cacheEnable = null;
 var cacheDir = '';
 
 var currentMainView = VIEW_ALBUM_LIST;
@@ -89,7 +91,7 @@ function showAlbumListByArtist(data){
 };
 
 function playSong(song){
-  if(localStorage.getItem('cache') !== '0'){
+  if(cacheEnable !== '0'){
     var req = sdcard.get(cacheDir+song.path);
     
     req.onsuccess = function(){
@@ -123,7 +125,7 @@ function saveSong(blob, song, play){
   }
   
   req.onerror = function(){
-    console.error('Unable to save the song: '+this.error);
+    console.error('Unable to save the song: '+this.error.message);
   }
 }
 
@@ -158,6 +160,51 @@ function showAlbum(data){
     $("#songList input").checkboxradio({defaults: true});
 }
 
+function showOptions(){
+  $(":mobile-pagecontainer").pagecontainer( "change", "#pOptions");
+  
+  var server = localStorage.getItem("server");
+  var username = localStorage.getItem("username");
+  var password = localStorage.getItem("password");
+  
+  if(server !== null){
+    $("#opServer").val(server);
+    $("#opUsername").val(username);
+    password = password.substr(4, password.length); // get only after 'enc:'
+    password = hexToString(password); // convert hex to string
+    $("#opPassword").val(password);
+  }
+  
+  var sdcards = navigator.getDeviceStorages("sdcard");
+  // disable cache option if non SDcard
+  // on Firefox simulator, have one SDcard but not have name
+  if(sdcards.length === 0 || sdcards[0].storageName === ''){
+    $("#opCacheEnable").slider("disable");
+    $("#opCacheDir").selectmenu("disable");
+  }else{
+    $("#opCacheEnable").slider("enable");
+    
+    $("#opCacheDir").empty();
+    for(var i=0;i<sdcards.length;i++)
+      $("#opCacheDir").append('<option value="'+sdcards[i].storageName+'">'+sdcards[i].storageName+'</option>');
+    
+    var cacheEnable = localStorage.getItem("cacheEnable");
+    var cacheDir = localStorage.getItem("cacheDir");
+    
+    if(cacheEnable !== null && cacheEnable === '1'){
+      $("#opCacheEnable").val(1);
+      $("#opCacheDir").selectmenu("enable");
+      $("#opCacheDir option[value="+cacheDir+"]").attr("selected", "selected");
+    }else{ // disable cache dir if cache is off
+      $("#opCacheEnable").val(0);
+      $("#opCacheDir").selectmenu("disable");
+    }
+    
+    $("#opCacheEnable").slider("refresh");
+    $("#opCacheDir").selectmenu("refresh");
+  }
+}
+
 function testPing(data){
   $("#test.Server").button("enable");
   if(data.status === 'ok')
@@ -179,8 +226,8 @@ $("#listview").delegate("li", "click", function(){
     }
 });
 
-$("#opCache").on("change", function(){
-  if($("#opCache").val())
+$("#opCacheEnable").on("change", function(){
+  if($("#opCacheEnable").val())
     $("#opCacheDir").selectmenu("enable");
   else
     $("#opCacheDir").selectmenu("disable");
@@ -202,85 +249,50 @@ $("#btAllPlay").click(function(){
 });
 
 $("#goOptions").click(function(){
-  $(":mobile-pagecontainer").pagecontainer( "change", "#pOptions");
-  
-  var oServer = localStorage.getItem("server");
-  var oUsername = localStorage.getItem("username");
-  var oPassword = localStorage.getItem("password");
-  
-  if(oServer !== null){
-    $("#opServer").val(oServer);
-    $("#opUsername").val(oUsername);
-    oPassword = oPassword.substr(4, oPassword.length); // get only after 'enc:'
-    oPassword = hexToString(oPassword); // convert hex to string
-    $("#opPassword").val(oPassword);
-  }
-  
-  var sdcards = navigator.getDeviceStorages("sdcard");
-  // disable cache option if non SDcard
-  // on Firefox simulator, have one SDcard but not have name
-  if(sdcards.length === 0 || sdcards[0].storageName === ''){
-    $("#opCache").slider("disable");
-    $("#opCacheDir").selectmenu("disable");
-  }else{
-    $("#opCache").slider("enable");
-    
-    $("#opCacheDir").empty();
-    for(var i=0;i<sdcards.length;i++)
-      $("#opCacheDir").append('<option value="'+i+'">'+sdcards[i].storageName+'</option>');
-    
-    var oCache = localStorage.getItem("cache");
-    var oCacheDir = localStorage.getItem("cacheDir");
-    
-    if(oCache !== null && oCache === '1'){
-      $("#opCache").val(1);
-      $("#opCacheDir").selectmenu("enable");
-      $("#opCacheDir option[value="+oCacheDir+"]").attr("selected", "selected");
-    }else{ // disable cache dir if cache is off
-      $("#opCache").val(0);
-      $("#opCacheDir").selectmenu("disable");
-    }
-    
-    $("#opCache").slider("refresh");
-    $("#opCacheDir").selectmenu("refresh");
-  }
+  showOptions();
 });
 
 $("#testServer").click(function(){
-  var oServer = $("#opServer").val();
-  var oUsername = $("#opUsername").val();
-  var oPassword = $("#opPassword").val();
+  var server = $("#opServer").val();
+  var username = $("#opUsername").val();
+  var password = $("#opPassword").val();
   
-  if(oServer === '' || oUsername === '' || oPassword === ''){
+  if(server === '' || username === '' || password === ''){
     alert('Merci de remplir les paramètres');
     return;
   }
   
-  var t_fsub = new Subsonic(oUsername, 'enc:'+stringToHex(oPassword), oServer, SUB_API_CLIENT, SUB_API_VERSION);
+  var t_fsub = new Subsonic(username, 'enc:'+stringToHex(password), server, SUB_API_CLIENT, SUB_API_VERSION);
   $("#test.Server").button("disable");
   t_fsub.ping(testPing);
 });
 
+$("#reinitFSub").click(function(){
+  if(confirm('Êtes-vous sûr de réinitialiser FSub ?')){
+    localStorage.clear();
+    location.href = 'index.html';
+  }
+});
+
 $("#opSave").click(function(){
-  var oServer = $("#opServer").val();
-  var oUsername = $("#opUsername").val();
-  var oPassword = $("#opPassword").val();
+  var server = $("#opServer").val();
+  var username = $("#opUsername").val();
+  var password = $("#opPassword").val();
   
-  var oCache = $("#opCache").val();
-  var oCacheDir = $("#opCacheDir").val();
+  var cacheEnable = $("#opCacheEnable").val();
+  var cacheDir = $("#opCacheDir").val();
   
-  if(oServer === '' || oUsername === '' || oPassword === ''){
+  if(server === '' || username === '' || password === ''){
     alert('Merci de remplir les paramètres');
     return;
   }
   
-  localStorage.setItem("server", oServer);
-  localStorage.setItem("username", oUsername);
-  localStorage.setItem("password", 'enc:'+stringToHex(oPassword));
+  localStorage.setItem("server", server);
+  localStorage.setItem("username", username);
+  localStorage.setItem("password", 'enc:'+stringToHex(password));
   
-  localStorage.setItem("cache", oCache);
-  console.log(oCache);
-  localStorage.setItem("cacheDir", oCacheDir);
+  localStorage.setItem("cacheEnable", cacheEnable);
+  localStorage.setItem("cacheDir", cacheDir);
   
   location.href = 'index.html';
 });
@@ -291,14 +303,15 @@ $(function(){
   var password = localStorage.getItem("password");
   
   if(server === null || username === null || password === null){
-    $(":mobile-pagecontainer").pagecontainer( "change", "#pOptions");
+    showOptions();
   }else{
     fsub = new Subsonic(username, password, server, SUB_API_CLIENT, SUB_API_VERSION);
     if(fsub === null){
       alert('Paramètre du serveur incorrect');
     }else{
       fsub.getAlbumList2(showAlbumList);
-      if(localStorage.getItem('cache') !== '0'){
+      cacheEnable = localStorage.getItem('cacheEnable');
+      if(cacheEnable !== '0'){
         sdcard = navigator.getDeviceStorage('sdcard');
         cacheDir = '/'+localStorage.getItem('cacheDir')+'/subsonic/';
       }
