@@ -144,6 +144,18 @@ audio.addEventListener("ended", function(){ // play next in playlist
     }
 }, false);
 
+// Get form Gaia Music
+// https://github.com/mozilla-b2g/gaia/blob/master/apps/music/js/Player.js
+// paused when the headset is removed
+var acm = navigator.mozAudioChannelManager;
+if(acm){
+    acm.addEventListener("headphoneschange", function(){
+        if(!acm.headphones && audio.duration > 0 && !audio.paused){
+            audio.pause();
+        }
+    });
+}
+
 function showAlbum(data){
     if(data.status === 'failed')
         return;
