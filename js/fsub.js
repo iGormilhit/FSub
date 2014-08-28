@@ -309,8 +309,12 @@ $("#opSave").click(function(){
   location.href = 'index.html';
 });
 
+$("#goPlayer").click(function(){
+  $(":mobile-pagecontainer").pagecontainer( "change", "#pPlayer");
+});
+
 $(function(){
-  $("#opPlayer").hide();
+  //$("#opPlayer").hide();
   
   var server = localStorage.getItem("server");
   var username = localStorage.getItem("username");
