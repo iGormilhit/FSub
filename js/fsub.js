@@ -310,6 +310,8 @@ $("#opSave").click(function(){
 });
 
 $(function(){
+  $("#opPlayer").hide();
+  
   var server = localStorage.getItem("server");
   var username = localStorage.getItem("username");
   var password = localStorage.getItem("password");
