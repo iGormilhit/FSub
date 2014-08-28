@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="css/fsub.css">
     
 		<script src="js/subsonic.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/fsub.js"></script>
     <script src="js/utils.js"></script>
 	</head>
 	
@@ -65,19 +67,20 @@
   <div data-role="page" id="pPlayer">
     <div data-role="header">
       <a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
-      <h1>Title</h1>
+      <h1 id="songTitle"></h1>
     </div>
     
     <div role="main" class="ui-content">
-      <img src="img/cover-cd-128.png" alt="Cover">
-    </div>
-    
-    <div data-role="footer" data-position="fixed">
-        <div data-role="controlgroup" data-type="horizontal">
-          <a href="#" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-previous">previous</a>
-          <a href="#" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-play">play_pause</a>
-          <a href="#" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-next">next</a>
-        </div>
+      <img src="img/cover-cd-128.png" alt="Cover" id="coverInPlayer">
+      
+      <div data-role="controlgroup" data-type="horizontal">
+        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-previous">previous</a>
+        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-stop">stop</a>
+        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-play">play or pause</a>
+        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-next">next</a>
+      </div>
+      
+      <fieldset data-role="controlgroup" data-type="vertical" id="playlist" data-mini="true"></fieldset>
     </div>
   </div>
   
@@ -125,6 +128,5 @@
       </form>
     </div>
   </div>
-	<script src="js/fsub.js"></script>
 	</body>
 </html>

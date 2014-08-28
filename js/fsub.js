@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 var SUB_API_VERSION = "1.8.0";
 var SUB_API_CLIENT = "FSub";
 
@@ -21,12 +22,6 @@ var VIEW_ALBUM_LIST = 0;
 var VIEW_ARTIST_LIST = 1;
 
 var fsub = null;
-var audio = new Audio();
-audio.preload = 'auto';
-audio.mozAudioChannelType = 'content';
-
-var playList = [];
-var indexOfPlaying = -1;
 
 var currentSongList = [];
 
@@ -89,72 +84,6 @@ function showAlbumListByArtist(data){
     }
     $("#listview").listview("refresh");
 };
-
-function playSong(song){
-  if(cacheEnable !== '0'){
-    var req = sdcard.get(cacheDir+song.path);
-    
-    req.onsuccess = function(){
-      audio.src = URL.createObjectURL(this.result);
-    }
-    
-    req.onerror = function(){
-      fsub.stream(saveSong, song, true);
-    }
-  }else{
-    var param = '?u='+encodeURIComponent(fsub.username);
-    param += '&p='+encodeURIComponent(fsub.password);
-    param += '&v='+encodeURIComponent(fsub.version);
-    param += '&c='+encodeURIComponent(fsub.appname);
-    param += '&id='+song.id;
-    param += '&f=json';
-    audio.src = fsub.server+'stream.view'+param;
-  }
-  
-  audio.play();
-  $("#title").html(song.title);
-}
-
-function saveSong(blob, song, play){
-  var req = sdcard.addNamed(blob, cacheDir+song.path);
-  
-  req.onsuccess = function(){
-    if(typeof play !== 'undefined' && play){
-      playSong(song);
-    }
-  }
-  
-  req.onerror = function(){
-    console.error('Unable to save the song: '+this.error.message);
-  }
-}
-
-function startPlaylist(){
-  indexOfPlaying = 0;
-  playSong(playList[indexOfPlaying]);
-}
-
-audio.addEventListener("ended", function(){ // play next in playlist
-    indexOfPlaying++;
-    if(typeof playList[indexOfPlaying] !== 'undefined'){
-        playSong(playList[indexOfPlaying]);
-    }else{
-        indexOfPlaying=0;
-        $("#title").html('FSub');
-    }
-}, false);
-
-// Get form Gaia Music
-// https://github.com/mozilla-b2g/gaia/blob/master/apps/music/js/Player.js
-// paused when the headset is removed
-var acm = navigator.mozAudioChannelManager;
-if(acm){
-    acm.addEventListener("headphoneschange", function(){
-        if(!acm.headphones && audio.duration > 0 && !audio.paused){
-            audio.pause();
-        }
-    });
-}
 
 function showAlbum(data){
     if(data.status === 'failed')
