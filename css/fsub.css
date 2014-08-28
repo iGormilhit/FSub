@@ -6,6 +6,11 @@
   margin-left: 15px;
 }
 
+/* Center all controlgroup */
+[data-role="controlgroup"]{
+  text-align: center;
+}
+
 /*
  * Source : http://andymatthews.net/code/jquery-mobile-icon-pack/
  */
