@@ -32,7 +32,80 @@ var indexOfPlaying = -1;
 
 var downloadList = [];
 
-function playSong(song){
+function startPlay(){
+  var req = sdcard.get(coverArtDir+playList[indexOfPlaying].coverArt);
+  
+  req.onsuccess = function(){
+    $("#coverInPlayer").attr("src", URL.createObjectURL(this.result));
+  }
+  
+  req.onerror = function(){
+    var param = '?u='+encodeURIComponent(fsub.username);
+    param += '&p='+encodeURIComponent(fsub.password);
+    param += '&v='+encodeURIComponent(fsub.version);
+    param += '&c='+encodeURIComponent(fsub.appname);
+    param += '&id='+playList[indexOfPlaying].coverArt;
+    param += '&size=128&f=json';
+    $("#coverInPlayer").attr("src", fsub.server+'getCoverArt.view'+param);
+  }
+  
+  audio.play();
+  
+  $("#playerPlayOrPause").removeClass("ui-icon-play");
+  $("#playerPlayOrPause").addClass("ui-icon-pause");
+  
+  $("#title").html(playList[indexOfPlaying].title);
+  $("#songTitle").html(playList[indexOfPlaying].title);
+}
+
+function PlayPause(){
+  if(audio.duration > 0 && !audio.paused){ // paused
+    audio.pause();
+    
+    $("#playerPlayOrPause").removeClass("ui-icon-pause");
+    $("#playerPlayOrPause").addClass("ui-icon-play");
+  }else if(audio.duration > 0 && audio.paused){
+    audio.play();
+    
+    $("#playerPlayOrPause").removeClass("ui-icon-play");
+    $("#playerPlayOrPause").addClass("ui-icon-pause");
+  }else{
+    startPlaylist();
+  }
+}
+
+function stop(){
+  if(audio.duration > 0){
+    audio.pause();
+    audio.currentTime = 0;
+    
+    indexOfPlaying=0;
+    
+    $("#playerPlayOrPause").removeClass("ui-icon-pause");
+    $("#playerPlayOrPause").addClass("ui-icon-play");
+    
+    $("#title").html('FSub');
+    $("#songTitle").html('FSub');
+  }
+}
+
+function playPrevious(){
+  if(typeof playList[indexOfPlaying-1] === 'undefined')
+    return;
+
+  indexOfPlaying--;
+  playSong(playList[indexOfPlaying]);
+}
+
+function playNext(){
+  if(typeof playList[indexOfPlaying+1] === 'undefined')
+    return;
+
+  indexOfPlaying++;
+  playSong(playList[indexOfPlaying]);
+}
+
+function directPlaySong(song){
   var param = '?u='+encodeURIComponent(fsub.username);
   param += '&p='+encodeURIComponent(fsub.password);
   param += '&v='+encodeURIComponent(fsub.version);
@@ -41,22 +114,96 @@ function playSong(song){
   param += '&f=json';
   audio.src = fsub.server+'stream.view'+param;
   
+  startPlay();
+}
+
+function songFilename(song){
+  if(typeof song.transcodedSuffix !== 'undefined')
+    return songsDir+song.id+'.'+song.transcodedSuffix;
+  else
+    return songsDir+song.id+'.'+song.suffix;
+}
+
+function playSong(song){
   if(cacheEnable !== '0'){ // check if already on cache
-    var req = sdcard.get(cacheDir+song.path);
+    var req = sdcard.get(songFilename(song));
     
     req.onsuccess = function(){
       audio.src = URL.createObjectURL(this.result);
+      startPlay();
     }
+    
+    req.onerror = function(){
+      directPlaySong(song);
+    }
+  }else{
+    directPlaySong(song);
   }
-  
-  audio.play();
-  $("#title").html(song.title);
-  $("#songTitle").html(song.title);
 }
 
 function startPlaylist(){
-  indexOfPlaying = 0;
-  playSong(playList[indexOfPlaying]);
+  if(playList.length > 0){
+    if(cacheEnable !== '0'){
+      downloadSong(playList);
+    }
+    indexOfPlaying = 0;
+    playSong(playList[indexOfPlaying]);
+  }
+}
+
+function saveSong(blob, song){
+  var req = sdcard.addNamed(blob, songFilename(song));
+  
+  req.onsuccess = function(){
+    console.log('Save the song: '+this.result);
+  }
+  
+  req.onerror = function(){
+    console.error('Unable to save the song ('+song.title+'): '+this.error.message);
+  }
+  
+  downloadSong();
+}
+
+function downloadSong(songs){
+  if(typeof songs !== 'undefined')
+    downloadList = downloadList.concat(songs);
+  
+  if(downloadList.length > 0){
+    downloadCoverArt(downloadList[0]);
+    
+    var req = sdcard.get(songFilename(downloadList[0]));
+    
+    req.onsuccess = function(){
+      downloadList.splice(0, 1);
+      downloadSong();
+    }
+    
+    req.onerror = function(){
+      fsub.stream(saveSong, downloadList[0]);
+      downloadList.splice(0, 1);
+    }
+  }
+}
+
+function saveCoverArt(blob, song){
+  var req = sdcard.addNamed(blob, coverArtDir+song.coverArt+'.jpeg');
+  
+  req.onsuccess = function(){
+    console.log('Save the song: '+this.result);
+  }
+  
+  req.onerror = function(){
+    console.error('Unable to save the cover ('+song.title+'): '+this.error.message);
+  }
+}
+
+function downloadCoverArt(song){
+  var req = sdcard.get(coverArtDir+song.coverArt+'.jpeg');
+  
+  req.onerror = function(){
+    fsub.getCoverArt(saveCoverArt, song);
+  }
 }
 
 audio.addEventListener("ended", function(){ // play next in playlist
@@ -66,39 +213,6 @@ audio.addEventListener("ended", function(){ // play next in playlist
     }else{
         indexOfPlaying=0;
         $("#title").html('FSub');
-        $("#songTitle").html(song.title);
+        $("#songTitle").html('FSub');
     }
 }, false);
-
-function saveSong(blob, song){
-  var req = sdcard.addNamed(blob, cacheDir+song.path);
-  
-  req.onsuccess = function(){
-    console.log('Save the song: '+this.result);
-  }
-  
-  req.onerror = function(){
-    console.error('Unable to save the song: '+this.error.message);
-  }
-  
-  download();
-}
-
-function download(songs){
-  if(typeof songs !== 'undefined')
-    downloadList = downloadList.concat(songs);
-  
-  if(downloadList.length > 0){
-    var req = sdcard.get(cacheDir+downloadList[0].path);
-    
-    downloadList.splice(0, 1);
-    
-    req.onsuccess = function(){
-      download();
-    }
-    
-    req.error = function(){
-      fsub.stream(saveSong, downloadList[0]);
-    }
-  }
-}

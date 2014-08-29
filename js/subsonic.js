@@ -208,7 +208,7 @@ Subsonic.prototype.getSong = function(callback, id){
  * @param {obj} song
  * @param {json} callback_param
  */
-Subsonic.prototype.stream = function(callback, song, play){
+Subsonic.prototype.stream = function(callback, song){
 	if(typeof callback === 'undefined' || typeof song === 'undefined'){
 		console.error('[error] stream : song and/or callback parameter must be defined');
 		return;
@@ -225,14 +225,51 @@ Subsonic.prototype.stream = function(callback, song, play){
 	var xhr = new XMLHttpRequest({mozSystem: true});
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 0)){
-      if(typeof play !== 'undefined')
-        callback(xhr.response, song, play);
-      else
-        callback(xhr.response, song);
+      callback(xhr.response, song);
 		}
 	};
 	xhr.open('GET', this.server+'stream.view'+param, true);
   xhr.responseType = 'blob';
-  xhr.overrideMimeType(song.contentType);
+  if(typeof song.transcodedContentType !== 'undefined')
+    xhr.overrideMimeType(song.transcodedContentType);
+  else
+    xhr.overrideMimeType(song.contentType);
+	xhr.send(null);
+};
+
+/*
+ * http://your-server/rest/getCoverArt.view
+ * 
+ * @param {string} callback
+ * @param {number} id
+ * * @param {number} size
+ * @param {json} callback_param
+ */
+Subsonic.prototype.getCoverArt = function(callback, song, size){
+	if(typeof callback === 'undefined' || typeof song === 'undefined'){
+		console.error('[error] getCoverArt : song and/or callback parameter must be defined');
+		return;
+	}
+  
+	// add default param
+	var param = '?u='+encodeURIComponent(this.username);
+	param += '&p='+encodeURIComponent(this.password);
+	param += '&v='+encodeURIComponent(this.version);
+	param += '&c='+encodeURIComponent(this.appname);
+  param += '&id='+song.coverArt;
+	param += '&f=json';
+  
+  if(typeof size !== 'undefined')
+    param += '&size='+size;
+  
+	var xhr = new XMLHttpRequest({mozSystem: true});
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 0)){
+      callback(xhr.response, song);
+		}
+	};
+	xhr.open('GET', this.server+'getCoverArt.view'+param, true);
+  xhr.responseType = 'blob';
+  xhr.overrideMimeType('image/jpeg');
 	xhr.send(null);
 };

@@ -13,9 +13,8 @@
     <link rel="stylesheet" href="css/fsub.css">
     
 		<script src="js/subsonic.js"></script>
-    <script src="js/player.js"></script>
-    <script src="js/fsub.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/player.js"></script>
 	</head>
 	
 	<body>
@@ -57,7 +56,7 @@
               <a href="#" class="ui-btn" id="btAllPlay">Ts jouer</a>
               <a href="#" class="ui-btn">Jouer</a>
               <a href="#" class="ui-btn">Ajouter</a>
-              <a href="#" class="ui-btn">Téléch.</a>
+              <a href="#" class="ui-btn" id="downloadSongs">Téléch.</a>
           </div>
 	        <fieldset data-role="controlgroup" data-type="vertical" id="songList" data-mini="true"></fieldset>
 	    </div>
@@ -67,17 +66,17 @@
   <div data-role="page" id="pPlayer">
     <div data-role="header">
       <a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
-      <h1 id="songTitle"></h1>
+      <h1 id="songTitle">FSub</h1>
     </div>
     
     <div role="main" class="ui-content">
       <img src="img/cover-cd-128.png" alt="Cover" id="coverInPlayer">
       
       <div data-role="controlgroup" data-type="horizontal">
-        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-previous">previous</a>
-        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-stop">stop</a>
-        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-play">play or pause</a>
-        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-next">next</a>
+        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-previous" id="playerPrevious">previous</a>
+        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-stop" id="playerStop">stop</a>
+        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-play" id="playerPlayOrPause">play or pause</a>
+        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-next" id="playerNext">next</a>
       </div>
       
       <fieldset data-role="controlgroup" data-type="vertical" id="playlist" data-mini="true"></fieldset>
@@ -115,6 +114,8 @@
           
           <label for="opCacheDir">Dossier de cache:</label>
           <select name="opCacheDir" id="opCacheDir"></select>
+          
+          <a href="#" class="ui-btn" id="clearCache">Vider le cache</a>
         </div>
         
         <div data-role="fieldcontain">
@@ -128,5 +129,6 @@
       </form>
     </div>
   </div>
+  <script src="js/fsub.js"></script>
 	</body>
 </html>

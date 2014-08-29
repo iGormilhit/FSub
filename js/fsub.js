@@ -28,6 +28,8 @@ var currentSongList = [];
 var sdcard = null;
 var cacheEnable = null;
 var cacheDir = '';
+var songsDir = '';
+var coverArtDir = '';
 
 var currentMainView = VIEW_ALBUM_LIST;
 
@@ -187,6 +189,11 @@ $("#goArtistList").click(function(){
 $("#btAllPlay").click(function(){
   playList = currentSongList;
   startPlaylist();
+  $(":mobile-pagecontainer").pagecontainer( "change", "#pPlayer");
+});
+
+$("#downloadSongs").click(function(){
+  downloadSong(currentSongList);
 });
 
 $("#goOptions").click(function(){
@@ -206,6 +213,22 @@ $("#testServer").click(function(){
   var t_fsub = new Subsonic(username, 'enc:'+stringToHex(password), server, SUB_API_CLIENT, SUB_API_VERSION);
   $("#test.Server").button("disable");
   t_fsub.ping(testPing);
+});
+
+$("#clearCache").click(function(){
+  if(confirm('Êtes-vous sûr de vider le cache ?')){
+    var req = sdcard.delete(cacheDir);
+    
+    req.onsuccess = function(){
+      console.log(cacheDir+' successfully removed');
+      alert('Cache vidé !');
+    }
+    
+    req.onerror = function(){
+      console.error('Unable to remove '+cacheDir);
+      alert('Impossible de vider le cache !');
+    }
+  }
 });
 
 $("#reinitFSub").click(function(){
@@ -242,9 +265,23 @@ $("#goPlayer").click(function(){
   $(":mobile-pagecontainer").pagecontainer( "change", "#pPlayer");
 });
 
+$("#playerPlayOrPause").click(function(){
+  PlayPause();
+});
+
+$("#playerStop").click(function(){
+  stop();
+});
+
+$("#playerPrevious").click(function(){
+  playPrevious();
+});
+
+$("#playerNext").click(function(){
+  playNext();
+});
+
 $(function(){
-  //$("#opPlayer").hide();
-  
   var server = localStorage.getItem("server");
   var username = localStorage.getItem("username");
   var password = localStorage.getItem("password");
@@ -261,6 +298,8 @@ $(function(){
       if(cacheEnable !== '0'){
         sdcard = navigator.getDeviceStorage('sdcard');
         cacheDir = '/'+localStorage.getItem('cacheDir')+'/subsonic/';
+        songsDir = cacheDir+'songs/';
+        coverArtDir = cacheDir+'coverArt/';
       }
     }
   }
