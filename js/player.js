@@ -78,6 +78,7 @@ function stop(){
   if(audio.duration > 0){
     audio.pause();
     audio.currentTime = 0;
+    audio.src = '';
     
     indexOfPlaying=0;
     
