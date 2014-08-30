@@ -1,4 +1,3 @@
-'user strict'
 /*
  * This file is part of Fsub.
  *

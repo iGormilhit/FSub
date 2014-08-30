@@ -1,4 +1,4 @@
-'user strict'
+'use strict'
 
 function stringToHex(str){
   var hex = '';
