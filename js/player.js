@@ -37,7 +37,7 @@ function startPlay(){
   
   req.onsuccess = function(){
     $("#coverInPlayer").attr("src", URL.createObjectURL(this.result));
-  }
+  };
   
   req.onerror = function(){
     var param = '?u='+encodeURIComponent(fsub.username);
@@ -47,7 +47,7 @@ function startPlay(){
     param += '&id='+playList[indexOfPlaying].coverArt;
     param += '&size=128&f=json';
     $("#coverInPlayer").attr("src", fsub.server+'getCoverArt.view'+param);
-  }
+  };
   
   audio.play();
   
@@ -132,11 +132,11 @@ function playSong(song){
     req.onsuccess = function(){
       audio.src = URL.createObjectURL(this.result);
       startPlay();
-    }
+    };
     
     req.onerror = function(){
       directPlaySong(song);
-    }
+    };
   }else{
     directPlaySong(song);
   }
@@ -157,11 +157,11 @@ function saveSong(blob, song){
   
   req.onsuccess = function(){
     console.log('Save the song: '+this.result);
-  }
+  };
   
   req.onerror = function(){
     console.error('Unable to save the song ('+song.title+'): '+this.error.message);
-  }
+  };
   
   downloadSong();
 }
@@ -178,12 +178,12 @@ function downloadSong(songs){
     req.onsuccess = function(){
       downloadList.splice(0, 1);
       downloadSong();
-    }
+    };
     
     req.onerror = function(){
       fsub.stream(saveSong, downloadList[0]);
       downloadList.splice(0, 1);
-    }
+    };
   }
 }
 
@@ -192,11 +192,11 @@ function saveCoverArt(blob, song){
   
   req.onsuccess = function(){
     console.log('Save the song: '+this.result);
-  }
+  };
   
   req.onerror = function(){
     console.error('Unable to save the cover ('+song.title+'): '+this.error.message);
-  }
+  };
 }
 
 function downloadCoverArt(song){
@@ -204,7 +204,7 @@ function downloadCoverArt(song){
   
   req.onerror = function(){
     fsub.getCoverArt(saveCoverArt, song);
-  }
+  };
 }
 
 audio.addEventListener("ended", function(){ // play next in playlist

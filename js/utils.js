@@ -1,3 +1,5 @@
+'user strict'
+
 function stringToHex(str){
   var hex = '';
   for(var i=0;i<str.length;i++){

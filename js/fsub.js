@@ -85,7 +85,7 @@ function showAlbumListByArtist(data){
       });
     }
     $("#listview").listview("refresh");
-};
+}
 
 function showAlbum(data){
     if(data.status === 'failed')
@@ -222,12 +222,12 @@ $("#clearCache").click(function(){
     req.onsuccess = function(){
       console.log(cacheDir+' successfully removed');
       alert('Cache vidé !');
-    }
+    };
     
     req.onerror = function(){
       console.error('Unable to remove '+cacheDir);
       alert('Impossible de vider le cache !');
-    }
+    };
   }
 });
 
