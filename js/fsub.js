@@ -281,6 +281,10 @@ $("#playerNext").click(function(){
   playNext();
 });
 
+$("#goAbout").click(function(){
+  $(":mobile-pagecontainer").pagecontainer( "change", "#pAbout");
+});
+
 $(function(){
   var server = localStorage.getItem("server");
   var username = localStorage.getItem("username");
