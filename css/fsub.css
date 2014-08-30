@@ -19,6 +19,25 @@
   height: 128px;
 }
 
+#songTitle{
+    margin-right: 0;
+}
+
+.marquee{
+    animation-duration: 10s;
+    animation-name: marquee;
+    animation-iteration-count: infinite;
+}
+
+@keyframes marquee{
+    from{
+        margin-left: 100%;
+    }
+    
+    to{
+        margin-left: 0%;
+    }
+}
 /*
  * Source : http://andymatthews.net/code/jquery-mobile-icon-pack/
  */

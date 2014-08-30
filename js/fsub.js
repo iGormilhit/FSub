@@ -185,10 +185,14 @@ $("#goArtistList").click(function(){
     fsub.getArtists(showArtistList);
 });
 
-$("#btAllPlay").click(function(){
+$("#playAll").click(function(){
   playList = currentSongList;
   startPlaylist();
   $(":mobile-pagecontainer").pagecontainer( "change", "#pPlayer");
+});
+
+$("#playSelected").click(function(){
+  alert($("#songList").children().attr('id'));
 });
 
 $("#downloadSongs").click(function(){
@@ -287,6 +291,14 @@ $("#playerNext").click(function(){
 
 $("#goAbout").click(function(){
   $(":mobile-pagecontainer").pagecontainer( "change", "#pAbout");
+});
+
+$("#songTitle").bind("overflow", function(){
+  $("#songTitle").addClass("marquee");
+});
+
+$("#songTitle").bind("underflow", function(){
+  $("#songTitle").removeClass("marquee");
 });
 
 $(function(){
