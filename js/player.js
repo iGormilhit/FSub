@@ -20,11 +20,13 @@ audio.mozAudioChannelType = 'content';
 
 // paused when the headset is removed
 var acm = navigator.mozAudioChannelManager;
-acm.addEventListener("headphoneschange", function(){
-    if(!acm.headphones && audio.duration > 0 && !audio.paused){
-        audio.pause();
-    }
-});
+if(acm){
+    acm.addEventListener("headphoneschange", function(){
+        if(!acm.headphones && audio.duration > 0 && !audio.paused){
+            audio.pause();
+        }
+    });
+}
 
 var playList = [];
 var indexOfPlaying = -1;
