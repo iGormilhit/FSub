@@ -34,22 +34,32 @@ var indexOfPlaying = -1;
 var downloadList = [];
 
 function startPlay(){
-  var req = sdcard.get(coverArtDir+playList[indexOfPlaying].coverArt);
-  
-  req.onsuccess = function(){
-    $("#coverInPlayer").attr("src", URL.createObjectURL(this.result));
-  };
-  
-  req.onerror = function(){
-    var param = '?u='+encodeURIComponent(fsub.username);
+	if(cacheEnable !== '0'){
+  	var req = sdcard.get(coverArtDir+playList[indexOfPlaying].coverArt);
+  	
+	  req.onsuccess = function(){
+	    $("#coverInPlayer").attr("src", URL.createObjectURL(this.result));
+	  };
+	  
+	  req.onerror = function(){
+	    var param = '?u='+encodeURIComponent(fsub.username);
+	    param += '&p='+encodeURIComponent(fsub.password);
+	    param += '&v='+encodeURIComponent(fsub.version);
+	    param += '&c='+encodeURIComponent(fsub.appname);
+	    param += '&id='+playList[indexOfPlaying].coverArt;
+	    param += '&f=json';
+	    $("#coverInPlayer").attr("src", fsub.server+'getCoverArt.view'+param);
+	  };
+	}else{
+		var param = '?u='+encodeURIComponent(fsub.username);
     param += '&p='+encodeURIComponent(fsub.password);
     param += '&v='+encodeURIComponent(fsub.version);
     param += '&c='+encodeURIComponent(fsub.appname);
     param += '&id='+playList[indexOfPlaying].coverArt;
-    param += '&size=128&f=json';
+    param += '&f=json';
     $("#coverInPlayer").attr("src", fsub.server+'getCoverArt.view'+param);
-  };
-  
+	}
+	
   audio.play();
   
   $("#playerPlayOrPause").removeClass("ui-icon-play");
@@ -168,6 +178,11 @@ function saveSong(blob, song){
 }
 
 function downloadSong(songs){
+	if(cacheEnable === '0'){
+		console.error('[downloadSong] cache is disable');
+		return;
+	}
+	
   if(typeof songs !== 'undefined')
     downloadList = downloadList.concat(songs);
   
@@ -216,5 +231,6 @@ audio.addEventListener("ended", function(){ // play next in playlist
         indexOfPlaying=0;
         $("#title").html('FSub');
         $("#songTitle").html('FSub');
+        $("#coverInPlayer").attr("src", "img/cover-cd-128.png");
     }
 }, false);

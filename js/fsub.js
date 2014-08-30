@@ -192,7 +192,10 @@ $("#btAllPlay").click(function(){
 });
 
 $("#downloadSongs").click(function(){
-  downloadSong(currentSongList);
+  if(cacheEnable === '0')
+    alert('Impossible de télécharger car le cache est desactivé !');
+  else
+    downloadSong(currentSongList);
 });
 
 $("#goOptions").click(function(){
@@ -215,7 +218,9 @@ $("#testServer").click(function(){
 });
 
 $("#clearCache").click(function(){
-  if(confirm('Êtes-vous sûr de vider le cache ?')){
+  if(cacheEnable !== '0'){
+    alert('Le cache est desactivé !');
+  }else if(confirm('Êtes-vous sûr de vider le cache ?')){
     var req = sdcard.delete(cacheDir);
     
     req.onsuccess = function(){

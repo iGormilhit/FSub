@@ -71,7 +71,7 @@ Subsonic.prototype.query = function(path, callback, query){
 	var xhr = new XMLHttpRequest({mozSystem: true});
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 0)){
-			obj = JSON.parse(xhr.responseText);
+			var obj = JSON.parse(xhr.responseText);
 			callback(obj['subsonic-response']);
 		}
 	};
@@ -230,11 +230,11 @@ Subsonic.prototype.stream = function(callback, song){
 		}
 	};
 	xhr.open('GET', this.server+'stream.view'+param, true);
-  xhr.responseType = 'blob';
-  if(typeof song.transcodedContentType !== 'undefined')
-    xhr.overrideMimeType(song.transcodedContentType);
-  else
-    xhr.overrideMimeType(song.contentType);
+    xhr.responseType = 'blob';
+    if(typeof song.transcodedContentType !== 'undefined')
+        xhr.overrideMimeType(song.transcodedContentType);
+    else
+        xhr.overrideMimeType(song.contentType);
 	xhr.send(null);
 };
 
@@ -266,11 +266,11 @@ Subsonic.prototype.getCoverArt = function(callback, song, size){
 	var xhr = new XMLHttpRequest({mozSystem: true});
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 0)){
-      callback(xhr.response, song);
+            callback(xhr.response, song);
 		}
 	};
 	xhr.open('GET', this.server+'getCoverArt.view'+param, true);
-  xhr.responseType = 'blob';
-  xhr.overrideMimeType('image/jpeg');
+    xhr.responseType = 'blob';
+    xhr.overrideMimeType('image/jpeg');
 	xhr.send(null);
 };
