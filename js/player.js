@@ -65,7 +65,6 @@ function startPlay(){
   $("#playerPlayOrPause").removeClass("ui-icon-play");
   $("#playerPlayOrPause").addClass("ui-icon-pause");
   
-  $("#title").html(playList[indexOfPlaying].title);
   $("#songTitle").html(playList[indexOfPlaying].title);
 }
 
@@ -96,7 +95,6 @@ function stop(){
     $("#playerPlayOrPause").removeClass("ui-icon-pause");
     $("#playerPlayOrPause").addClass("ui-icon-play");
     
-    $("#title").html('FSub');
     $("#songTitle").html('FSub');
   }
 }
@@ -229,7 +227,6 @@ audio.addEventListener("ended", function(){ // play next in playlist
         playSong(playList[indexOfPlaying]);
     }else{
         indexOfPlaying=0;
-        $("#title").html('FSub');
         $("#songTitle").html('FSub');
         $("#coverInPlayer").attr("src", "img/cover-cd-128.png");
     }
