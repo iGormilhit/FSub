@@ -65,7 +65,7 @@ function startPlay(){
   $("#playerPlayOrPause").removeClass("ui-icon-play");
   $("#playerPlayOrPause").addClass("ui-icon-pause");
   
-  $("#songTitle").html(playList[indexOfPlaying].title);
+  $("#playerSongInfos").html(playList[indexOfPlaying].title+' ('+playList[indexOfPlaying].artist+')');
 }
 
 function PlayPause(){
@@ -95,7 +95,8 @@ function stop(){
     $("#playerPlayOrPause").removeClass("ui-icon-pause");
     $("#playerPlayOrPause").addClass("ui-icon-play");
     
-    $("#songTitle").html('FSub');
+    $("#playerSongInfos").html('');
+    $("#coverInPlayer").attr("src", "img/cover-cd-128.png");
   }
 }
 
@@ -227,7 +228,7 @@ audio.addEventListener("ended", function(){ // play next in playlist
         playSong(playList[indexOfPlaying]);
     }else{
         indexOfPlaying=0;
-        $("#songTitle").html('FSub');
+        $("#playerSongInfos").html(playList[indexOfPlaying].title+' ('+playList[indexOfPlaying].artist+')');
         $("#coverInPlayer").attr("src", "img/cover-cd-128.png");
     }
 }, false);

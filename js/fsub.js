@@ -297,12 +297,12 @@ $("#goAbout").click(function() {
 	$(":mobile-pagecontainer").pagecontainer("change", "#pAbout");
 });
 
-$("#songTitle").bind("overflow", function() {
-	$("#songTitle").addClass("marquee");
+$("#playerSongInfos").bind("overflow", function() {
+	$("#playerSongInfos").addClass("marquee");
 });
 
-$("#songTitle").bind("underflow", function() {
-	$("#songTitle").removeClass("marquee");
+$("#playerSongInfos").bind("underflow", function() {
+	$("#playerSongInfos").removeClass("marquee");
 });
 
 $(function() {
