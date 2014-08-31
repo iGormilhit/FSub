@@ -150,9 +150,9 @@ function showOptions(){
 function testPing(data){
   $("#test.Server").button("enable");
   if(data.status === 'ok')
-    alert('Connexion OK');
+    alert(_('test-ok'));
   else
-    alert('Error: '+data.error.message);
+    alert(_('test-nok', {msg: data.error.message}));
 }
 
 $("#listview").delegate("li", "click", function(){
@@ -197,7 +197,7 @@ $("#playSelected").click(function(){
 
 $("#downloadSongs").click(function(){
   if(cacheEnable === '0')
-    alert('Impossible de télécharger car le cache est desactivé !');
+    alert(_('download-nok'));
   else
     downloadSong(currentSongList);
 });
@@ -212,7 +212,7 @@ $("#testServer").click(function(){
   var password = $("#opPassword").val();
   
   if(server === '' || username === '' || password === ''){
-    alert('Merci de remplir les paramètres');
+    alert(_('fill-all-parameters'));
     return;
   }
   
@@ -223,24 +223,24 @@ $("#testServer").click(function(){
 
 $("#clearCache").click(function(){
   if(cacheEnable !== '0'){
-    alert('Le cache est desactivé !');
-  }else if(confirm('Êtes-vous sûr de vider le cache ?')){
+    alert(_('cache-disabled'));
+  }else if(confirm(_('confirm-clear-cache'))){
     var req = sdcard.delete(cacheDir);
     
     req.onsuccess = function(){
       console.log(cacheDir+' successfully removed');
-      alert('Cache vidé !');
+      alert(_('clear-cache-ok'));
     };
     
     req.onerror = function(){
       console.error('Unable to remove '+cacheDir);
-      alert('Impossible de vider le cache !');
+      alert(_('clear-cache-nok'));
     };
   }
 });
 
 $("#resetFSub").click(function(){
-  if(confirm('Êtes-vous sûr de réinitialiser FSub ?')){
+  if(confirm(_('confirm-rest-fsub'))){
     localStorage.clear();
     location.href = 'index.html';
   }
@@ -255,7 +255,7 @@ $("#opSave").click(function(){
   var cacheDir = $("#opCacheDir").val();
   
   if(server === '' || username === '' || password === ''){
-    alert('Merci de remplir les paramètres');
+    alert(_('fill-all-parameters'));
     return;
   }
   
@@ -311,7 +311,7 @@ $(function(){
   }else{
     fsub = new Subsonic(username, password, server, SUB_API_CLIENT, SUB_API_VERSION);
     if(fsub === null){
-      alert('Paramètre du serveur incorrect');
+      alert(_('server-connection-nok'));
     }else{
       fsub.getAlbumList2(showAlbumList);
       cacheEnable = localStorage.getItem('cacheEnable');
