@@ -2,153 +2,156 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
-    <meta charset="utf-8" />
-        
+		<meta charset="utf-8">
+		
 		<title>FSub</title>
 		
+		<!-- JQuery Mobile -->
 		<link rel="stylesheet" href="libraries/jquery-mobile/jquery.mobile-1.4.3.min.css">
-    <script src="libraries/jquery-mobile/jquery-1.11.1.min.js"></script>
-    <script src="libraries/jquery-mobile/jquery.mobile-1.4.3.min.js"></script>
+		<script src="libraries/jquery-mobile/jquery-1.11.1.min.js"></script>
+		<script src="libraries/jquery-mobile/jquery.mobile-1.4.3.min.js"></script>
 		
-    <link rel="stylesheet" href="css/fsub.css">
-    
+		<!-- webL10n -->
+		<script type="text/javascript" src="l10n.js"></script>
+		<link rel="prefetch" type="application/l10n" href="locales/locales.ini">
+		
+		<link rel="stylesheet" href="css/fsub.css">
+		
 		<script src="js/subsonic.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/player.js"></script>
+		<script src="js/utils.js"></script>
+		<script src="js/player.js"></script>
 	</head>
 	
 	<body>
-	<!-- Main page -->
-	<div data-role="page" id="pMain">
-	    <div data-role="header" data-position="fixed">
-	        <h1 id="title">FSub</h1>
-	        <a href="#" id="goPlayer" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-play">Player</a>
-	    </div>
-	    
-	    <div data-role="main" class="ui-content">
-	        <form>
-	            <input type="search" id="search" placeholder="Recherche...">
-	        </form>
-	        
-	        <ul data-role="listview" data-inset="true" id="listview"></ul>
-	    </div>
-	    
-	    <div data-role="footer" data-position="fixed">
-	        <div data-role="navbar">
-	            <ul>
-	                <li><a href="#" data-icon="bars" class="ui-btn-active" id="goAlbumList">Albums</a></li>
-	                <li><a href="#" data-icon="bullets" id="goArtistList">Artistes</a></li>
-                  <li><a href="#" data-icon="gear" id="goOptions">Options</a></li>
-	            </ul>
-	        </div>
-	    </div>
-	</div>
-	
-	<!-- Song list -->
-	<div data-role="page" id="pSong">
-	    <div data-role="header" data-postion="fixed">
-	        <a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
-	        <h1>Album</h1>
-	    </div>
-	    
-	    <div data-role="main" class="ui-content">
-          <div data-role="controlgroup" data-type="horizontal" data-mini="true">
-              <a href="#" class="ui-btn" id="playAll">Ts jouer</a>
-              <a href="#" class="ui-btn" id="playSelected">Jouer</a>
-              <a href="#" class="ui-btn" id="addSelected">Ajouter</a>
-              <a href="#" class="ui-btn" id="downloadSongs">Téléch.</a>
-          </div>
-	        <fieldset data-role="controlgroup" data-type="vertical" id="songList" data-mini="true"></fieldset>
-	    </div>
-	</div>
-  
-  <!-- Player page -->
-  <div data-role="page" id="pPlayer">
-    <div data-role="header">
-      <a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
-      <h1 id="songTitle">FSub</h1>
-    </div>
-    
-    <div role="main" class="ui-content">
-      <img src="img/cover-cd-128.png" alt="Cover" id="coverInPlayer">
-      
-      <div data-role="controlgroup" data-type="horizontal">
-        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-previous" id="playerPrevious">previous</a>
-        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-stop" id="playerStop">stop</a>
-        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-play" id="playerPlayOrPause">play or pause</a>
-        <a href="#" class="ui-btn ui-btn-icon-notext ui-icon-next" id="playerNext">next</a>
-      </div>
-      
-      <fieldset data-role="controlgroup" data-type="vertical" id="playlist" data-mini="true"></fieldset>
-    </div>
-  </div>
-  
-  <!-- Options page -->
-  <div data-role="page" id="pOptions">
-    <div data-role="header">
-      <a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
-      <h1>Paramètres</h1>
-    </div>
-    
-    <div role="main" class="ui-content">
-      <form id="fOptions">
-        <div data-role="fieldcontain">
-          <label for="opServer">Serveur:</label>
-          <input type="url" name="server" id="opServer" placeholder="http://your-server">
-          
-          <label for="opUsername">Utilisateur:</label>
-          <input type="text" name="username" id="opUsername" placeholder="username">
-          
-          <label for="opPassword">Mot de passe:</label>
-          <input type="password" name="password" id="opPassword" placeholder="password">
-          
-          <a href="#" class="ui-btn" id="testServer">Tester le serveur</a>
-        </div>
-        
-        <div class="ui-field-contain full-width-slider-switch">
-          <label for="opCacheEnable">Activer le cache:</label>
-          <select name="opCacheEnable" id="opCacheEnable" data-role="slider">
-            <option value="0">Non</option>
-            <option value="1">Oui</option>
-          </select>
-          
-          <label for="opCacheDir">Dossier de cache:</label>
-          <select name="opCacheDir" id="opCacheDir"></select>
-          
-          <a href="#" class="ui-btn" id="clearCache">Vider le cache</a>
-        </div>
-        
-        <div data-role="fieldcontain">
-          <a href="#" class="ui-btn" id="reinitFSub">Réinitialiser FSub</a>
-        </div>
-
-	<div data-role="fieldcontain">
-	  <a href="#" class="ui-btn" id="goAbout">À propos</a>
-	</div>
-        
-        <div class="ui-field-contain">
-          <a href="#" class="ui-btn ui-btn-inline" data-rel="back">Annuler</a>
-          <a href="#" class="ui-btn ui-btn-inline" id="opSave">Valider</a>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  
-  <!-- About page -->
-  <div data-role="page" id="pAbout">
-    <div data-role="header">
-      <a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
-      <h1>À propos</h1>
-    </div>
-    
-    <div role="main" class="ui-content">
-      <p>FSub <span id="fsubVersion">0.2.0</span></p>
-      <p>FSub a été initialement créée par <a href="http://www.tuxgasy.fr">TuxGasy</a></p>
-      <p>FSub est distribué sous <a href="https://www.gnu.org/copyleft/gpl.html">licence GNU GPLv3</a></p>
-    </div>
-  </div>
-
-  <script src="js/fsub.js"></script>
+		<!-- Main page -->
+		<div data-role="page" id="pMain">
+			<div data-role="header" data-position="fixed">
+				<h1 id="title">FSub</h1>
+				<!--<a href="#" id="goPlayer" class="ui-btn ui-btn-right ui-btn-icon-notext ui-icon-play">Player</a>-->
+			</div>
+			
+			<div data-role="main" class="ui-content">
+				<form>
+					<input type="search" id="search" data-l10n-id="search" placeholder="Search...">
+				</form>
+				
+				<ul data-role="listview" data-inset="true" id="listview"></ul>
+			</div>
+			
+			<div data-role="footer" data-position="fixed">
+				<div data-role="navbar">
+					<ul>
+						<li><a href="#" data-icon="bars" class="ui-btn-active" id="goAlbumList" data-l10n-id="albums">Albums</a></li>
+						<li><a href="#" data-icon="bullets" id="goArtistList" data-l10n-id="artists">Artistes</a></li>
+						<li><a href="#" data-icon="play" id="goPlayer" data-l10n-id="player">Player</a></li>
+						<li><a href="#" data-icon="gear" id="goOptions" data-l10n-id="options">Options</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Song list -->
+		<div data-role="page" id="pSong">
+			<div data-role="header" data-postion="fixed">
+				<a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
+				<h1>Album</h1>
+			</div>
+			
+			<div data-role="main" class="ui-content">
+				<div data-role="controlgroup" data-type="horizontal" data-mini="true">
+					<a href="#" class="ui-btn ui-btn-left ui-icon-play" id="playAll" data-l10n-id="play-all">Tout jouer</a>
+					<a href="#" class="ui-btn ui-btn-left ui-icon-download" id="downloadSongs" data-l10n-id="download-all">Tout télécharger</a>
+				</div>
+				<fieldset data-role="controlgroup" data-type="vertical" id="songList" data-mini="true"></fieldset>
+			</div>
+		</div>
+		
+		<!-- Player page -->
+		<div data-role="page" id="pPlayer">
+			<div data-role="header">
+				<a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
+				<h1 id="songTitle">FSub</h1>
+			</div>
+			
+			<div role="main" class="ui-content">
+				<img src="img/cover-cd-128.png" alt="Cover" id="coverInPlayer">
+				
+				<div data-role="controlgroup" data-type="horizontal">
+					<a href="#" class="ui-btn ui-btn-icon-notext ui-icon-previous" id="playerPrevious">previous</a>
+					<a href="#" class="ui-btn ui-btn-icon-notext ui-icon-stop" id="playerStop">stop</a>
+					<a href="#" class="ui-btn ui-btn-icon-notext ui-icon-play" id="playerPlayOrPause">play or pause</a>
+					<a href="#" class="ui-btn ui-btn-icon-notext ui-icon-next" id="playerNext">next</a>
+				</div>
+				
+				<fieldset data-role="controlgroup" data-type="vertical" id="playlist" data-mini="true"></fieldset>
+			</div>
+		</div>
+		
+		<!-- Options page -->
+		<div data-role="page" id="pOptions">
+			<div data-role="header">
+				<a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
+				<h1 data-l10n-id="settings">Settings</h1>
+			</div>
+			
+			<div role="main" class="ui-content">
+				<form id="fOptions">
+					<div data-role="fieldcontain">
+						<label for="opServer" data-l10n-id="server">Server:</label>
+						<input type="url" name="server" id="opServer" placeholder="http://your-server">
+						
+						<label for="opUsername" data-l10n-id="user">User:</label>
+						<input type="text" name="username" id="opUsername" placeholder="username">
+						
+						<label for="opPassword" data-l10n-id="password">Password:</label>
+						<input type="password" name="password" id="opPassword" placeholder="password">
+						
+						<a href="#" class="ui-btn" id="testServer" data-l10n-id="test-server">Test server</a>
+					</div>
+					
+					<div class="ui-field-contain full-width-slider-switch">
+						<label for="opCacheEnable" data-l10n-id="enable-cache">Enable the cache:</label>
+						<select name="opCacheEnable" id="opCacheEnable" data-role="slider">
+							<option value="0" data-l10n-id="No">No</option>
+							<option value="1" data-l10n-id="yes">Yes</option>
+						</select>
+						
+						<label for="opCacheDir" data-l10n-id="cache-folder">Cache folder:</label>
+						<select name="opCacheDir" id="opCacheDir"></select>
+						
+						<a href="#" class="ui-btn" id="clearCache" data-l10n-id="clear-cache">Clear the cache</a>
+					</div>
+					
+					<div data-role="fieldcontain">
+						<a href="#" class="ui-btn" id="resetFSub" data-l10n-id="reset-fsub">Reset FSub</a>
+					</div>
+					
+					<div data-role="fieldcontain">
+						<a href="#" class="ui-btn" id="goAbout" data-l10n-id="about">About</a>
+					</div>
+					
+					<div class="ui-field-contain">
+						<a href="#" class="ui-btn ui-btn-inline" data-rel="back" data-l10n-id="cancel">Cancel</a>
+						<a href="#" class="ui-btn ui-btn-inline" id="opSave" data-l10n-id="save">Save</a>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- About page -->
+		<div data-role="page" id="pAbout">
+			<div data-role="header">
+				<a href="#" data-rel="back" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-carat-l">Back</a>
+				<h1 data-l10n-id="about">About</h1>
+			</div>
+			
+			<div role="main" class="ui-content">
+				<p>FSub <span id="fsubVersion">0.2.0</span></p>
+				<p data-l10n-id="aboutOriginalCreator">FSub was originally created by <a href="http://www.tuxgasy.fr">TuxGasy</a></p>
+				<p data-l10n-id="aboutLicence">FSub is distributed under <a href="https://www.gnu.org/copyleft/gpl.html">licence GNU GPLv3</a></p>
+			</div>
+		</div>
+		
+		<script src="js/fsub.js"></script>
 	</body>
 </html>

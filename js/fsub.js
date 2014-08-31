@@ -239,7 +239,7 @@ $("#clearCache").click(function(){
   }
 });
 
-$("#reinitFSub").click(function(){
+$("#resetFSub").click(function(){
   if(confirm('Êtes-vous sûr de réinitialiser FSub ?')){
     localStorage.clear();
     location.href = 'index.html';
