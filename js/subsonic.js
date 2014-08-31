@@ -203,6 +203,21 @@ Subsonic.prototype.getSong = function(callback, id){
 };
 
 /*
+ * http://your-server/rest/search3.view
+ * 
+ * @param {string} callback
+ * @param {string} query
+ */
+Subsonic.prototype.search3 = function(callback, query){
+	if(typeof callback === 'undefined' || typeof query === 'undefined'){
+		console.error('[error] search3 : query and/or callback parameter must be defined');
+		return;
+	}
+	
+	this.query('search3', callback, {query:query});
+};
+
+/*
  * http://your-server/rest/stream.view
  * 
  * @param {string} callback
