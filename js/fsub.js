@@ -252,7 +252,7 @@ $("#testServer").click(function() {
 });
 
 $("#clearCache").click(function() {
-	if (cacheEnable !== '0') {
+	if (cacheEnable === '0') {
 		alert(_('cache-disabled'));
 	} else if (confirm(_('confirm-clear-cache'))) {
 		var req = sdcard.delete(cacheDir);
