@@ -94,11 +94,17 @@ function showAlbum(data) {
 	$("#songList").empty();
 	$(":mobile-pagecontainer").pagecontainer("change", "#pSong");
 
-	currentSongList = data.album.song;
-
-	$.each(data.album.song, function(i, song) {
-		$("#songList").append('<input id="sg-' + song.id + '" type="checkbox"><label for="sg-' + song.id + '">' + song.title + ' (' + song.artist + ')</label>');
-	});
+	if(typeof data.album.song.id !== 'undefined'){ // one song only
+    currentSongList = [data.album.song];
+    var song = data.album.song;
+    $("#songList").append('<input id="sg-' + song.id + '" type="checkbox"><label for="sg-' + song.id + '">' + song.title + ' (' + song.artist + ')</label>');
+  }else{
+    currentSongList = data.album.song;
+    $.each(data.album.song, function(i, song) {
+      $("#songList").append('<input id="sg-' + song.id + '" type="checkbox"><label for="sg-' + song.id + '">' + song.title + ' (' + song.artist + ')</label>');
+    });
+  }
+  
 	$("#songList input").checkboxradio({
 		defaults: true
 	});
