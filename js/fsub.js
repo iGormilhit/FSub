@@ -390,6 +390,10 @@ $("#playerSongInfos").bind("underflow", function() {
 });
 
 $(function() {
+  $.getJSON("manifest.webapp", function(json){
+    $("#fsubVersion").html(json.version);
+  });
+  
 	var server = localStorage.getItem("server");
 	var username = localStorage.getItem("username");
 	var password = localStorage.getItem("password");
