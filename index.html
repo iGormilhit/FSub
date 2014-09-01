@@ -26,6 +26,7 @@
 		<!-- Main page -->
 		<div data-role="page" id="pMain">
 			<div data-role="header" data-position="fixed">
+        <a href="#" class="ui-btn ui-btn-left ui-btn-icon-notext ui-icon-gear" id="goOptions">options</a>
 				<h1>FSub</h1>
 			</div>
 			
@@ -43,7 +44,7 @@
 						<li><a href="#" data-icon="bars" class="ui-btn-active" id="goAlbumList" data-l10n-id="albums">Albums</a></li>
 						<li><a href="#" data-icon="bullets" id="goArtistList" data-l10n-id="artists">Artists</a></li>
 						<li><a href="#" data-icon="play" id="goPlayer" data-l10n-id="player">Player</a></li>
-						<li><a href="#" data-icon="gear" id="goOptions" data-l10n-id="options">Options</a></li>
+						<!--<li><a href="#" data-icon="gear" id="goOptions" data-l10n-id="options">Options</a></li>-->
 					</ul>
 				</div>
 			</div>
@@ -112,8 +113,8 @@
 					<div class="ui-field-contain full-width-slider-switch">
 						<label for="opCacheEnable" data-l10n-id="enable-cache">Enable the cache:</label>
 						<select name="opCacheEnable" id="opCacheEnable" data-role="slider">
-							<option value="0" data-l10n-id="No">No</option>
-							<option value="1" data-l10n-id="yes">Yes</option>
+							<option value="0" data-l10n-id="cache-no">No</option>
+							<option value="1" data-l10n-id="cache-yes">Yes</option>
 						</select>
 						
 						<label for="opCacheDir" data-l10n-id="cache-folder">Cache folder:</label>
