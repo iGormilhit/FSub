@@ -261,9 +261,9 @@ Subsonic.prototype.stream = function(callback, song){
  * * @param {number} size
  * @param {json} callback_param
  */
-Subsonic.prototype.getCoverArt = function(callback, song, size){
-	if(typeof callback === 'undefined' || typeof song === 'undefined'){
-		console.error('[error] getCoverArt : song and/or callback parameter must be defined');
+Subsonic.prototype.getCoverArt = function(callback, parts, size){
+	if(typeof callback === 'undefined' || typeof parts === 'undefined'){
+		console.error('[error] getCoverArt : parts and/or callback parameter must be defined');
 		return;
 	}
   
@@ -272,7 +272,7 @@ Subsonic.prototype.getCoverArt = function(callback, song, size){
 	param += '&p='+encodeURIComponent(this.password);
 	param += '&v='+encodeURIComponent(this.version);
 	param += '&c='+encodeURIComponent(this.appname);
-  param += '&id='+song.coverArt;
+  param += '&id='+parts.coverArt;
 	param += '&f=json';
   
   if(typeof size !== 'undefined')
@@ -281,11 +281,11 @@ Subsonic.prototype.getCoverArt = function(callback, song, size){
 	var xhr = new XMLHttpRequest({mozSystem: true});
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 0)){
-            callback(xhr.response, song);
+            callback(xhr.response, parts);
 		}
 	};
 	xhr.open('GET', this.server+'getCoverArt.view'+param, true);
-    xhr.responseType = 'blob';
-    xhr.overrideMimeType('image/jpeg');
+  xhr.responseType = 'blob';
+  xhr.overrideMimeType('image/jpeg');
 	xhr.send(null);
 };

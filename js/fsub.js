@@ -32,19 +32,80 @@ var coverArtDir = '';
 
 var currentMainView = VIEW_ALBUM_LIST;
 
+function addAlbumItem(album){
+  $("#listview").append('<li id="' + album.id + '"><a href="#"><img src="img/cover-cd-128.png"><h2>' + album.name + '</h2><p>' + album.artist + '</p></a></li>');
+    
+  if(typeof album.coverArt !== 'undefined' && cacheEnable !== '0'){
+    var req = sdcard.get(coverArtDir+album.coverArt+'.jpeg');
+    
+    req.onsuccess = function(){
+      $("#"+album.id+" a").find("img").attr("src", URL.createObjectURL(this.result));
+    };
+    
+    req.onerror = function(){
+      downloadCoverArt(album);
+    };
+  }else if(typeof album.coverArt !== 'undefined'){
+    var param = '?u='+encodeURIComponent(fsub.username);
+    param += '&p='+encodeURIComponent(fsub.password);
+    param += '&v='+encodeURIComponent(fsub.version);
+    param += '&c='+encodeURIComponent(fsub.appname);
+    param += '&id='+album.coverArt;
+    param += '&f=json';
+    $("#"+album.id+" a").find("img").attr("src", fsub.server+'getCoverArt.view'+param);
+  }
+  
+  $("#listview").listview("refresh");
+}
+
+function addArtistItem(artist){
+  $("#listview").append('<li id="' + artist.id + '"><a href="#"><img src="img/cover-cd-128.png"><h2>' + artist.name + '</h2><p>' + artist.albumCount + ' album(s)</p></a></li>');
+
+  if(typeof artist.coverArt !== 'undefined' && cacheEnable !== '0'){
+    var req = sdcard.get(coverArtDir+artist.coverArt+'.jpeg');
+    
+    req.onsuccess = function(){
+      $("#"+artist.id+" a").find("img").attr("src", URL.createObjectURL(this.result));
+    };
+    
+    req.onerror = function(){
+      downloadCoverArt(artist);
+    };
+  }else if(typeof artist.coverArt !== 'undefined'){
+    var param = '?u='+encodeURIComponent(fsub.username);
+    param += '&p='+encodeURIComponent(fsub.password);
+    param += '&v='+encodeURIComponent(fsub.version);
+    param += '&c='+encodeURIComponent(fsub.appname);
+    param += '&id='+artist.coverArt;
+    param += '&f=json';
+    $("#"+artist.id+" a").find("img").attr("src", fsub.server+'getCoverArt.view'+param);
+  }
+  
+  $("#listview").listview("refresh");
+}
+
+function addSongItem(song){
+  $("#songList").append('<input id="sg-' + song.id + '" type="checkbox"><label for="sg-' + song.id + '">' + song.title + ' (' + song.artist + ')</label>');
+  
+  $("#songList input").checkboxradio({
+		defaults: true
+	});
+}
+
 function showAlbumList(data) {
 	if (data.status === 'failed')
 		return;
 
 	$("#listview").empty();
-
+  
 	currentMainView = VIEW_ALBUM_LIST;
-
-	$.each(data.albumList2.album, function(i, album) {
-		$("#listview").append('<li id="' + album.id + '"><a href="#"><img src="img/cover-cd-128.png"><h2>' + album.name + '</h2><p>' + album.artist + '</p></a></li>');
-	});
-
-	$("#listview").listview("refresh");
+  if(typeof data.albumList2.album.id !== 'undefined'){
+    addAlbumItem(data.albumList2.album);
+  }else{
+    $.each(data.albumList2.album, function(i, album) {
+      addAlbumItem(album);
+    });
+  }
 }
 
 function showArtistList(data) {
@@ -56,13 +117,10 @@ function showArtistList(data) {
 
 	$.each(data.artists.index, function(i, index) {
 		if (typeof index.artist.id !== 'undefined') {
-			var artist = index.artist;
-			$("#listview").append('<li id="' + artist.id + '"><a href="#"><img src="img/cover-cd-128.png"><h2>' + artist.name + '</h2><p>' + artist.albumCount + ' album(s)</p></a></li>');
-			$("#listview").listview("refresh");
+			addArtistItem(index.artist);
 		} else {
 			$.each(index.artist, function(j, artist) {
-				$("#listview").append('<li id="' + artist.id + '"><a href="#"><img src="img/cover-cd-128.png"><h2>' + artist.name + '</h2><p>' + artist.albumCount + ' album(s)</p></a></li>');
-				$("#listview").listview("refresh");
+				addArtistItem(artist);
 			});
 		}
 	});
@@ -76,38 +134,31 @@ function showAlbumListByArtist(data) {
 
 	currentMainView = VIEW_ALBUM_LIST;
 	if (typeof data.artist.album.id !== 'undefined') {
-		var album = data.artist.album;
-		$("#listview").append('<li id="' + album.id + '"><a href="#"><img src="img/cover-cd-128.png"><h2>' + album.name + '</h2><p>' + album.artist + '</p></a></li>');
+		addAlbumItem(data.artist.album);
 	} else {
 		$.each(data.artist.album, function(i, album) {
-			$("#listview").append('<li id="' + album.id + '"><a href="#"><img src="img/cover-cd-128.png"><h2>' + album.name + '</h2><p>' + album.artist + '</p></a></li>');
+			addAlbumItem(album);
 		});
 	}
-	$("#listview").listview("refresh");
 }
 
 function showAlbum(data) {
 	if (data.status === 'failed')
 		return;
-
+  
 	$("#pSong h1").html(data.album.name);
 	$("#songList").empty();
 	$(":mobile-pagecontainer").pagecontainer("change", "#pSong");
 
 	if(typeof data.album.song.id !== 'undefined'){ // one song only
     currentSongList = [data.album.song];
-    var song = data.album.song;
-    $("#songList").append('<input id="sg-' + song.id + '" type="checkbox"><label for="sg-' + song.id + '">' + song.title + ' (' + song.artist + ')</label>');
+    addSongItem(data.album.song);
   }else{
     currentSongList = data.album.song;
     $.each(data.album.song, function(i, song) {
-      $("#songList").append('<input id="sg-' + song.id + '" type="checkbox"><label for="sg-' + song.id + '">' + song.title + ' (' + song.artist + ')</label>');
+      addSongItem(song);
     });
   }
-  
-	$("#songList input").checkboxradio({
-		defaults: true
-	});
 }
 
 function showSearch(data) {
@@ -118,14 +169,15 @@ function showSearch(data) {
 	$("#songList").empty();
 	$(":mobile-pagecontainer").pagecontainer("change", "#pSong");
   
-	currentSongList = data.searchResult3.song;
-  
-	$.each(data.searchResult3.song, function(i, song) {
-		$("#songList").append('<input id="sg-' + song.id + '" type="checkbox"><label for="sg-' + song.id + '">' + song.title + ' (' + song.artist + ')</label>');
-	});
-	$("#songList input").checkboxradio({
-		defaults: true
-	});
+	if(typeof data.searchResult3.song.id !== 'undefined'){ // only one song
+    currentSongList = [data.searchResult3.song];
+    addSongItem(data.searchResult3.song);
+  }else{
+    $.each(data.searchResult3.song, function(i, song) {
+      currentSongList = data.searchResult3.song;
+      addSongItem(song);
+    });
+  }
 }
 
 function showOptions() {

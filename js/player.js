@@ -35,30 +35,24 @@ var downloadList = [];
 
 function startPlay(){
 	if(cacheEnable !== '0'){
-  	var req = sdcard.get(coverArtDir+playList[indexOfPlaying].coverArt);
+  	var req = sdcard.get(coverArtDir+playList[indexOfPlaying].coverArt+'.jpeg');
   	
 	  req.onsuccess = function(){
 	    $("#coverInPlayer").attr("src", URL.createObjectURL(this.result));
 	  };
-	  
-	  req.onerror = function(){
-	    var param = '?u='+encodeURIComponent(fsub.username);
-	    param += '&p='+encodeURIComponent(fsub.password);
-	    param += '&v='+encodeURIComponent(fsub.version);
-	    param += '&c='+encodeURIComponent(fsub.appname);
-	    param += '&id='+playList[indexOfPlaying].coverArt;
-	    param += '&f=json';
-	    $("#coverInPlayer").attr("src", fsub.server+'getCoverArt.view'+param);
-	  };
-	}else{
-		var param = '?u='+encodeURIComponent(fsub.username);
+    
+    req.onerror = function(){
+      $("#coverInPlayer").attr("src", "img/cover-cd-128.png");
+    };
+	}else if(typeof playList[indexOfPlaying].coverArt !== 'undefined'){
+    var param = '?u='+encodeURIComponent(fsub.username);
     param += '&p='+encodeURIComponent(fsub.password);
     param += '&v='+encodeURIComponent(fsub.version);
     param += '&c='+encodeURIComponent(fsub.appname);
     param += '&id='+playList[indexOfPlaying].coverArt;
     param += '&f=json';
     $("#coverInPlayer").attr("src", fsub.server+'getCoverArt.view'+param);
-	}
+  }
 	
   audio.play();
   
@@ -202,24 +196,42 @@ function downloadSong(songs){
   }
 }
 
-function saveCoverArt(blob, song){
-  var req = sdcard.addNamed(blob, coverArtDir+song.coverArt+'.jpeg');
+/*
+ * parts can be album, artist or song array
+ */
+function saveCoverArt(blob, parts){
+  var coverArt = parts.coverArt;
+  var req = sdcard.addNamed(blob, coverArtDir+coverArt+'.jpeg');
   
   req.onsuccess = function(){
-    console.log('Save the song: '+this.result);
+    console.log('Save the cover: '+this.result);
+    switch(coverArt.toString().slice(0,2)) {
+      case 'al':
+        $("#"+parts.id+" a").find("img").attr("src", URL.createObjectURL(blob));
+        break;
+      case 'ar':
+        $("#"+parts.id+" a").find("img").attr("src", URL.createObjectURL(blob));
+        break;
+      default: // song's coverArt : set the cover if it's playing
+        if(playList[indexOfPlaying].id === parts.id){
+          $("#coverInPlayer").attr("src", URL.createObjectURL(blob));
+        }
+    }
   };
   
   req.onerror = function(){
-    console.error('Unable to save the cover ('+song.title+'): '+this.error.message);
+    console.error(this.error);
   };
 }
 
-function downloadCoverArt(song){
-  var req = sdcard.get(coverArtDir+song.coverArt+'.jpeg');
-  
-  req.onerror = function(){
-    fsub.getCoverArt(saveCoverArt, song);
-  };
+function downloadCoverArt(parts){
+  if(typeof parts.coverArt !== 'undefined'){
+    var req = sdcard.get(coverArtDir+parts.coverArt+'.jpeg');
+    
+    req.onerror = function(){
+      fsub.getCoverArt(saveCoverArt, parts);
+    };
+  }
 }
 
 audio.addEventListener("ended", function(){ // play next in playlist
