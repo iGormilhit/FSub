@@ -1,7 +1,8 @@
 {
   "name": "FSub",
-  "description": "Un client Subsonic pour Firefox OS",
+  "description": "Subsonic client for Firefox OS",
   "version": "0.2.0",
+  "type": "privileged",
   "launch_path": "/index.html",
   "icons": {
     "60": "/img/fsub-60.png",
@@ -18,9 +19,15 @@
       "access": "readwrite"
     }
   },
-  "type": "privileged",
-  "installs_allowed_from": [
-    "*"
-  ],
-  "default_locale": "fr"
+  "locales": {
+    "en": {
+      "name": "FSub",
+      "description": "Subsonic client for Firefox OS"
+    },
+    "fr": {
+      "name": "FSub",
+      "description": "Un client Subsonic pour Firefox OS"
+    }
+  },
+  "default_locale": "en"
 }
