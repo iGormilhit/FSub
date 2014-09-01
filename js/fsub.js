@@ -104,6 +104,24 @@ function showAlbum(data) {
 	});
 }
 
+function showSearch(data) {
+  if (data.status === 'failed')
+    return;
+  
+  $("#pSong h1").html("Search");
+	$("#songList").empty();
+	$(":mobile-pagecontainer").pagecontainer("change", "#pSong");
+  
+	currentSongList = data.searchResult3.song;
+  
+	$.each(data.searchResult3.song, function(i, song) {
+		$("#songList").append('<input id="sg-' + song.id + '" type="checkbox"><label for="sg-' + song.id + '">' + song.title + ' (' + song.artist + ')</label>');
+	});
+	$("#songList input").checkboxradio({
+		defaults: true
+	});
+}
+
 function showOptions() {
 	$(":mobile-pagecontainer").pagecontainer("change", "#pOptions");
 
@@ -179,6 +197,14 @@ $("#opCacheEnable").on("change", function() {
 		$("#opCacheDir").selectmenu("disable");
 
 	$("#opCacheDir").selectmenu("refresh");
+});
+
+$("#fSearch").submit(function(e){
+  e.preventDefault();
+  var str = $("#search").val();
+  if(str.length > 2){
+    fsub.search3(showSearch, str);
+  }
 });
 
 $("#goAlbumList").click(function() {
