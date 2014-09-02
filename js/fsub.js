@@ -84,8 +84,8 @@ function addArtistItem(artist){
   $("#listview").listview("refresh");
 }
 
-function addSongItem(song){
-  $("#songList").append('<input id="sg-' + song.id + '" type="checkbox"><label for="sg-' + song.id + '">' + song.title + ' (' + song.artist + ')</label>');
+function addSongItem(song, idList){
+  $("#songList").append('<input value="'+idList+'" id="sg-' + song.id + '" type="checkbox"><label for="sg-' + song.id + '">' + song.title + ' (' + song.artist + ')</label>');
   
   $("#songList input").checkboxradio({
 		defaults: true
@@ -152,11 +152,11 @@ function showAlbum(data) {
 
 	if(typeof data.album.song.id !== 'undefined'){ // one song only
     currentSongList = [data.album.song];
-    addSongItem(data.album.song);
+    addSongItem(data.album.song, 0);
   }else{
     currentSongList = data.album.song;
     $.each(data.album.song, function(i, song) {
-      addSongItem(song);
+      addSongItem(song, i);
     });
   }
 }
@@ -171,11 +171,11 @@ function showSearch(data) {
   
 	if(typeof data.searchResult3.song.id !== 'undefined'){ // only one song
     currentSongList = [data.searchResult3.song];
-    addSongItem(data.searchResult3.song);
+    addSongItem(data.searchResult3.song, 0);
   }else{
     $.each(data.searchResult3.song, function(i, song) {
       currentSongList = data.searchResult3.song;
-      addSongItem(song);
+      addSongItem(song, i);
     });
   }
 }
@@ -273,21 +273,48 @@ $("#goArtistList").click(function() {
 	fsub.getArtists(showArtistList);
 });
 
-$("#playAll").click(function() {
-	playList = currentSongList;
+function getSelectedSongs(){
+	var list = [];
+	var nbSongsSelected = $("#songList input:checked").length;
+	
+	if(nbSongsSelected > 0){
+		$("#songList input:checked").each(function(){
+			var idList = $(this).val();
+			list.push(currentSongList[idList]);
+		});
+	}
+	
+	return list;
+}
+
+$("#playSongs").click(function() {
+	playList = getSelectedSongs();
+	
+	if(playList.length === 0) // play all is non selected
+		playList = currentSongList;
+	
 	startPlaylist();
 	$(":mobile-pagecontainer").pagecontainer("change", "#pPlayer");
 });
 
-$("#playSelected").click(function() {
-	alert($("#songList").children().attr('id'));
+$("#addSongs").click(function(){
+	var list = getSelectedSongs();
+	if(list.length === 0)
+		playList = playList.concat(currentSongList);
+	else
+		playList = playList.concat(list);
 });
 
 $("#downloadSongs").click(function() {
 	if (cacheEnable === '0')
 		alert(_('download-nok'));
-	else
-		downloadSong(currentSongList);
+	else{
+		var list = getSelectedSongs();
+		if(list.length === 0) // download all
+			downloadSong(currentSongList);
+		else
+			downloadSong(list);
+	}
 });
 
 $("#goOptions").click(function() {
