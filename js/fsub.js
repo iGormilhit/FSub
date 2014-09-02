@@ -381,14 +381,6 @@ $("#goAbout").click(function() {
 	$(":mobile-pagecontainer").pagecontainer("change", "#pAbout");
 });
 
-$("#playerSongInfos").bind("overflow", function() {
-	$("#playerSongInfos").addClass("marquee");
-});
-
-$("#playerSongInfos").bind("underflow", function() {
-	$("#playerSongInfos").removeClass("marquee");
-});
-
 $(function() {
   $.getJSON("manifest.webapp", function(json){
     $("#fsubVersion").html(json.version);

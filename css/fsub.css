@@ -25,21 +25,6 @@
   text-align: center;
 }
 
-.marquee{
-	width: 100%;
-	margin: 0 auto;
-	overflow: hidden;
-	white-space: nowrap;
-    animation-duration: 50s;
-    animation-name: marquee;
-    animation-iteration-count: infinite;
-}
-
-@keyframes marquee{
-    0%	 { text-indent: 27.5em; }
-    100% { text-indent: -105em; }
-}
-
 /*
  * Source : http://andymatthews.net/code/jquery-mobile-icon-pack/
  */
