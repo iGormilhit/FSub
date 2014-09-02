@@ -41,17 +41,17 @@ function startPlay(){
 	    $("#coverInPlayer").attr("src", URL.createObjectURL(this.result));
 	  };
     
-    req.onerror = function(){
-      $("#coverInPlayer").attr("src", "img/cover-cd-128.png");
-    };
+     req.onerror = function(){
+       $("#coverInPlayer").attr("src", "img/cover-cd-128.png");
+     };
 	}else if(typeof playList[indexOfPlaying].coverArt !== 'undefined'){
-    var param = '?u='+encodeURIComponent(fsub.username);
-    param += '&p='+encodeURIComponent(fsub.password);
-    param += '&v='+encodeURIComponent(fsub.version);
-    param += '&c='+encodeURIComponent(fsub.appname);
-    param += '&id='+playList[indexOfPlaying].coverArt;
-    param += '&f=json';
-    $("#coverInPlayer").attr("src", fsub.server+'getCoverArt.view'+param);
+        var param = '?u='+encodeURIComponent(fsub.username);
+        param += '&p='+encodeURIComponent(fsub.password);
+        param += '&v='+encodeURIComponent(fsub.version);
+        param += '&c='+encodeURIComponent(fsub.appname);
+        param += '&id='+playList[indexOfPlaying].coverArt;
+        param += '&f=json';
+        $("#coverInPlayer").attr("src", fsub.server+'getCoverArt.view'+param);
   }
 	
   audio.play();
@@ -60,6 +60,8 @@ function startPlay(){
   $("#playerPlayOrPause").addClass("ui-icon-pause");
   
   $("#playerSongInfos").html(playList[indexOfPlaying].title+' ('+playList[indexOfPlaying].artist+')');
+  
+  updateSongPlaying();
 }
 
 function PlayPause(){
@@ -84,13 +86,15 @@ function stop(){
     audio.currentTime = 0;
     audio.src = '';
     
-    indexOfPlaying=0;
+    indexOfPlaying=-1;
     
     $("#playerPlayOrPause").removeClass("ui-icon-pause");
     $("#playerPlayOrPause").addClass("ui-icon-play");
     
     $("#playerSongInfos").html('');
     $("#coverInPlayer").attr("src", "img/cover-cd-128.png");
+    
+    updateSongPlaying();
   }
 }
 
@@ -239,8 +243,6 @@ audio.addEventListener("ended", function(){ // play next in playlist
     if(typeof playList[indexOfPlaying] !== 'undefined'){
         playSong(playList[indexOfPlaying]);
     }else{
-        indexOfPlaying=0;
-        $("#playerSongInfos").html(playList[indexOfPlaying].title+' ('+playList[indexOfPlaying].artist+')');
-        $("#coverInPlayer").attr("src", "img/cover-cd-128.png");
+        stop();
     }
 }, false);

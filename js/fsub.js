@@ -180,6 +180,26 @@ function showSearch(data) {
   }
 }
 
+function refreshPlayList(){
+    if(playList.length === 0)
+        return;
+    
+    $("#playlist").empty();
+    for(var i=0;i<playList.length;i++){
+        $("#playlist").append('<a href="#" class="ui-btn ui-corner-all" id="pl-'+i+'">'+playList[i].title+' ('+playList[i].artist+')</a>');
+    }
+    
+    updateSongPlaying();
+}
+
+function updateSongPlaying(){
+    $("#playlist").find(".ui-icon-play").removeClass("ui-icon-play ui-btn-icon-left"); // remove previous icon play
+    
+    if(indexOfPlaying !== -1){
+        $("#pl-"+indexOfPlaying).addClass("ui-icon-play ui-btn-icon-left");
+    }
+}
+
 function showOptions() {
 	$(":mobile-pagecontainer").pagecontainer("change", "#pOptions");
 
@@ -293,8 +313,9 @@ $("#playSongs").click(function() {
 	if(playList.length === 0) // play all is non selected
 		playList = currentSongList;
 	
-	startPlaylist();
+	refreshPlayList();
 	$(":mobile-pagecontainer").pagecontainer("change", "#pPlayer");
+	startPlaylist();
 });
 
 $("#addSongs").click(function(){
@@ -303,6 +324,8 @@ $("#addSongs").click(function(){
 		playList = playList.concat(currentSongList);
 	else
 		playList = playList.concat(list);
+	
+	refreshPlayList();
 });
 
 $("#downloadSongs").click(function() {
