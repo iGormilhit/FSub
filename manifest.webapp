@@ -13,9 +13,14 @@
     "url": "http://www.tuxgasy.fr"
   },
   "permissions": {
-    "systemXHR": {},
-    "audio-channel-content": {},
+    "systemXHR": {
+      "description": "Allow to get songs/covers from your Subsonic Server"
+    },
+    "audio-channel-content": {
+      "description": "Allow play music when move app on background"
+    },
     "device-storage:sdcard": {
+      "description": "Allow to cache songs/covers on your device (not required but recommanded)",
       "access": "readwrite"
     }
   },
