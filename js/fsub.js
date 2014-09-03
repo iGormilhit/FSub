@@ -221,9 +221,10 @@ function showOptions() {
 	if (sdcards.length === 0 || sdcards[0].storageName === '') {
 		$("#opCacheEnable").slider("disable");
 		$("#opCacheDir").selectmenu("disable");
+    $("#clearCache").addClass("ui-state-disabled");
 	} else {
 		$("#opCacheEnable").slider("enable");
-
+    
 		$("#opCacheDir").empty();
 		for (var i = 0; i < sdcards.length; i++)
 			$("#opCacheDir").append('<option value="' + sdcards[i].storageName + '">' + sdcards[i].storageName + '</option>');
@@ -238,6 +239,7 @@ function showOptions() {
 		} else { // disable cache dir if cache is off
 			$("#opCacheEnable").val(0);
 			$("#opCacheDir").selectmenu("disable");
+      $("#clearCache").addClass("ui-state-disabled");
 		}
 
 		$("#opCacheEnable").slider("refresh");
@@ -269,11 +271,13 @@ $("#listview").delegate("li", "click", function() {
 });
 
 $("#opCacheEnable").on("change", function() {
-	if ($("#opCacheEnable").val())
+	if ($("#opCacheEnable").val() === "1"){
 		$("#opCacheDir").selectmenu("enable");
-	else
+    $("#clearCache").removeClass("ui-state-disabled");
+	}else{
 		$("#opCacheDir").selectmenu("disable");
-
+    $("#clearCache").addClass("ui-state-disabled");
+  }
 	$("#opCacheDir").selectmenu("refresh");
 });
 
