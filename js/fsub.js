@@ -17,6 +17,9 @@
 var SUB_API_VERSION = "1.8.0";
 var SUB_API_CLIENT = "FSub";
 
+var ALBUM_LIST_TYPE = 'alphabeticalByName';
+var ALBUM_LIST_SIZE = 15;
+
 var VIEW_ALBUM_LIST = 0;
 var VIEW_ARTIST_LIST = 1;
 
@@ -31,6 +34,7 @@ var songsDir = '';
 var coverArtDir = '';
 
 var currentMainView = VIEW_ALBUM_LIST;
+var currentAlbumOffset = -1;
 
 function addAlbumItem(album){
   $("#listview").append('<li id="' + album.id + '"><a href="#"><img src="img/cover-cd-128.png"><h2>' + album.name + '</h2><p>' + album.artist + '</p></a></li>');
@@ -99,6 +103,11 @@ function showAlbumList(data) {
 	$("#listview").empty();
   
 	currentMainView = VIEW_ALBUM_LIST;
+  currentAlbumOffset = 0;
+  loadAlbumList(data);
+}
+
+function loadAlbumList(data){
   if(typeof data.albumList2.album.id !== 'undefined'){
     addAlbumItem(data.albumList2.album);
   }else{
@@ -290,7 +299,7 @@ $("#fSearch").submit(function(e){
 });
 
 $("#goAlbumList").click(function() {
-	fsub.getAlbumList2(showAlbumList);
+  fsub.getAlbumList2(showAlbumList, ALBUM_LIST_TYPE, ALBUM_LIST_SIZE);
 });
 
 $("#goArtistList").click(function() {
@@ -435,6 +444,14 @@ $("#goAbout").click(function() {
 	$(":mobile-pagecontainer").pagecontainer("change", "#pAbout");
 });
 
+$(document).scroll(function(){
+  if($(window).scrollTop() + $(window).height() === $(document).height() && currentMainView === VIEW_ALBUM_LIST){
+    console.log('loading...');
+    currentAlbumOffset++;
+    fsub.getAlbumList2(loadAlbumList, ALBUM_LIST_TYPE, ALBUM_LIST_SIZE, currentAlbumOffset);
+  }
+});
+
 $(function() {
   $.getJSON("manifest.webapp", function(json){
     $("#fsubVersion").html(json.version);
@@ -451,7 +468,7 @@ $(function() {
 		if (fsub === null) {
 			alert(_('server-connection-nok'));
 		} else {
-			fsub.getAlbumList2(showAlbumList);
+			fsub.getAlbumList2(showAlbumList, ALBUM_LIST_TYPE, ALBUM_LIST_SIZE);
 			cacheEnable = localStorage.getItem('cacheEnable');
 			if (cacheEnable !== '0') {
 				sdcard = navigator.getDeviceStorage('sdcard');
