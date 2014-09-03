@@ -74,9 +74,12 @@
 			</div>
 			
 			<div role="main" class="ui-content">
-                <p id="playerSongInfos"></p>
-				<img src="img/cover-cd-128.png" alt="Cover" id="coverInPlayer">
-				
+				<form class="full-width-slider">
+          <img src="img/cover-cd-128.png" alt="Cover" id="coverInPlayer">
+          <label id="playerSongInfos"></label>
+          <input name="sliderPlayer" id="sliderPlayer" value="0" min="0" max="100" step="1" data-mini="true" data-highlight="true" type="range" disabled>
+        </form>
+        
 				<div data-role="controlgroup" data-type="horizontal">
 					<a href="#" class="ui-btn ui-btn-icon-notext ui-icon-previous" id="playerPrevious">previous</a>
 					<a href="#" class="ui-btn ui-btn-icon-notext ui-icon-stop" id="playerStop">stop</a>

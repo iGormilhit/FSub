@@ -94,6 +94,9 @@ function stop(){
     $("#playerSongInfos").html('');
     $("#coverInPlayer").attr("src", "img/cover-cd-128.png");
     
+    $("#sliderPlayer").val(0);
+    $("#sliderPlayer").slider("refresh");
+    
     updateSongPlaying();
   }
 }
@@ -245,4 +248,10 @@ audio.addEventListener("ended", function(){ // play next in playlist
     }else{
         stop();
     }
+}, false);
+
+audio.addEventListener("timeupdate", function(){ // update #sliderPlayer
+  var pos = parseInt(audio.currentTime*100/audio.duration);
+  $("#sliderPlayer").val(pos);
+  $("#sliderPlayer").slider("refresh");
 }, false);
