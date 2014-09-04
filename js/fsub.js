@@ -449,8 +449,7 @@ $("#goAbout").click(function() {
 });
 
 $(document).scroll(function(){
-  if($(window).scrollTop() + $(window).height() === $(document).height() && currentMainView === VIEW_ALBUM_LIST){
-    console.log('loading...');
+  if($(window).scrollTop() + $(window).height() === $(document).height() && fsub !== null && currentMainView === VIEW_ALBUM_LIST){
     currentAlbumOffset += ALBUM_LIST_SIZE;
     fsub.getAlbumList2(loadAlbumList, ALBUM_LIST_TYPE, ALBUM_LIST_SIZE, currentAlbumOffset);
   }
