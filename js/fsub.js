@@ -447,7 +447,7 @@ $("#goAbout").click(function() {
 $(document).scroll(function(){
   if($(window).scrollTop() + $(window).height() === $(document).height() && currentMainView === VIEW_ALBUM_LIST){
     console.log('loading...');
-    currentAlbumOffset++;
+    currentAlbumOffset += ALBUM_LIST_SIZE;
     fsub.getAlbumList2(loadAlbumList, ALBUM_LIST_TYPE, ALBUM_LIST_SIZE, currentAlbumOffset);
   }
 });
