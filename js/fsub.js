@@ -108,6 +108,10 @@ function showAlbumList(data) {
 }
 
 function loadAlbumList(data){
+  if(typeof data.albumList2.album === 'undefined'){ // no album
+    return;
+  }
+  
   if(typeof data.albumList2.album.id !== 'undefined'){
     addAlbumItem(data.albumList2.album);
   }else{
